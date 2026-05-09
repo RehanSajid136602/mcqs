@@ -1,0 +1,100 @@
+{
+  "subjects": [
+    {
+      "id": "physics",
+      "name": "Physics",
+      "icon": "Atom",
+      "chapters": [
+        {
+          "id": "chapter-15-gravitation",
+          "name": "Chapter 15: Gravitation",
+          "sets": [
+            {
+              "id": "chapter-15-gravitation-set-1",
+              "label": "Set 1",
+              "questions": [
+                {
+                  "q": "What is the value of acceleration due to gravity $g$ on Earth's surface?",
+                  "options": ["8.9 m/s²", "9.8 m/s²", "10.2 m/s²", "11.0 m/s²"],
+                  "correct": 1
+                },
+                {
+                  "q": "According to Newton's law of gravitation, the force is proportional to:",
+                  "options": ["$F \\propto r$", "$F \\propto \\frac{1}{r^2}$", "$F \\propto r^2$", "$F \\propto \\frac{1}{r}$"],
+                  "correct": 1
+                }
+              ]
+            },
+            {
+              "id": "chapter-15-gravitation-set-2",
+              "label": "Set 2",
+              "questions": [
+                {
+                  "q": "The value of gravitational constant $G$ is:",
+                  "options": ["$6.67 \\times 10^{-11}$ N m²/kg²", "$6.67 \\times 10^{-11}$ N m/kg²", "$9.8 \\times 10^{-11}$ N m²/kg²", "$6.67 \\times 10^{11}$ N m²/kg²"],
+                  "correct": 0
+                },
+                {
+                  "q": "A satellite orbiting Earth has constant speed because:",
+                  "options": ["No force acts on it", "Gravitational force provides centripetal acceleration", "It has no mass", "It is beyond Earth's gravity"],
+                  "correct": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "chapter-16-statistical-mechanics-and-thermodynamics",
+          "name": "Chapter 16: Statistical Mechanics and Thermodynamics",
+          "sets": [
+            {
+              "id": "chapter-16-statistical-mechanics-and-thermodynamics-set-1",
+              "label": "Set 1",
+              "questions": [
+                {
+                  "q": "The average kinetic energy of a gas molecule is directly proportional to:",
+                  "options": ["Volume", "Pressure", "Absolute temperature", "Density"],
+                  "correct": 2
+                },
+                {
+                  "q": "According to kinetic molecular theory, pressure of a gas is due to:",
+                  "options": ["Repulsive forces between molecules", "Attractive forces between molecules", "Collisions of molecules with container walls", "Potential energy of molecules"],
+                  "correct": 2
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "maths",
+      "name": "Maths",
+      "icon": "Calculator",
+      "chapters": [
+        {
+          "id": "chapter-01-functions-and-graphs",
+          "name": "Chapter 1: Functions and Graphs",
+          "sets": [
+            {
+              "id": "chapter-01-functions-and-graphs-set-1",
+              "label": "Set 1",
+              "questions": [
+                {
+                  "q": "If $f(x) = 2x + 3$, then $f^{-1}(x)$ is:",
+                  "options": ["$\\frac{x-3}{2}$", "$\\frac{x+3}{2}$", "$2x - 3$", "$\\frac{3-2x}{1}$"],
+                  "correct": 0
+                },
+                {
+                  "q": "The domain of $f(x) = \\frac{1}{x-2}$ is:",
+                  "options": ["$x \\neq 2$", "$x > 2$", "$x < 2$", "$x = 2$"],
+                  "correct": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, X, ChevronRight, RotateCcw, ArrowLeft, History, User } from "lucide-react";
+import { Check, X, ChevronRight, RotateCcw, ArrowLeft, History, User, CheckCircle } from "lucide-react";
 import type { MCQSet, QuestionAttempt } from "@/types";
 import { useProgress } from "@/hooks/useProgress";
 import { createAttempt as createAttemptFn, finalizeAttempt } from "@/hooks/useAttemptHistory";
@@ -56,6 +56,7 @@ export default function Quiz({ set, subjectId, chapterId, onBack }: QuizProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
+  const [isConfirmed, setIsConfirmed] = useState(false);
   const [score, setScore] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
   const [isShuffled, setIsShuffled] = useState(false);
@@ -76,11 +77,16 @@ export default function Quiz({ set, subjectId, chapterId, onBack }: QuizProps) {
     (idx: number) => {
       if (isAnswered) return;
       setSelectedIndex(idx);
-      setIsAnswered(true);
-      if (idx === current.correct) setScore((s) => s + 1);
     },
-    [isAnswered, current]
+    [isAnswered]
   );
+
+  const handleConfirm = useCallback(() => {
+    if (selectedIndex === null) return;
+    setIsConfirmed(true);
+    setIsAnswered(true);
+    if (selectedIndex === current.correct) setScore((s) => s + 1);
+  }, [selectedIndex, current]);
 
   const handleNext = useCallback(() => {
     if (current && selectedIndex !== null) {
@@ -100,6 +106,7 @@ export default function Quiz({ set, subjectId, chapterId, onBack }: QuizProps) {
       setCurrentIndex((i) => i + 1);
       setSelectedIndex(null);
       setIsAnswered(false);
+      setIsConfirmed(false);
     } else {
       saveProgress(set.id, score, total);
       if (attemptId) {
@@ -117,6 +124,7 @@ export default function Quiz({ set, subjectId, chapterId, onBack }: QuizProps) {
     setCurrentIndex(0);
     setSelectedIndex(null);
     setIsAnswered(false);
+    setIsConfirmed(false);
     setScore(0);
     setIsComplete(false);
   }, [set, subjectId, chapterId]);
@@ -225,6 +233,7 @@ export default function Quiz({ set, subjectId, chapterId, onBack }: QuizProps) {
                   const isCorrectOption = idx === current.correct;
                   const showCorrect = isAnswered && isCorrectOption;
                   const showWrong = isAnswered && isSelected && !isCorrectOption;
+                  const showPending = isSelected && !isAnswered;
 
                   return (
                     <motion.button
@@ -240,6 +249,8 @@ export default function Quiz({ set, subjectId, chapterId, onBack }: QuizProps) {
                             ? "bg-emerald-500/20 border-emerald-500 text-emerald-400"
                             : showWrong
                             ? "bg-rose-500/20 border-rose-500 text-rose-400"
+                            : showPending
+                            ? "bg-[--accent]/10 border-[--accent] text-[--text]"
                             : isAnswered
                             ? "bg-white/5 border-white/10 text-[--text]/40 cursor-not-allowed"
                             : "bg-white/5 border-white/10 text-[--text] hover:bg-white/10 hover:border-white/20 cursor-pointer"
@@ -251,6 +262,7 @@ export default function Quiz({ set, subjectId, chapterId, onBack }: QuizProps) {
                       </span>
                       {showCorrect && <Check size={20} className="text-emerald-400" />}
                       {showWrong && <X size={20} className="text-rose-400" />}
+                      {showPending && <CheckCircle size={20} className="text-[--accent]" />}
                     </motion.button>
                   );
                 })}
@@ -264,6 +276,24 @@ export default function Quiz({ set, subjectId, chapterId, onBack }: QuizProps) {
         </AnimatePresence>
 
         <AnimatePresence>
+          {selectedIndex !== null && !isAnswered && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="flex flex-col items-center gap-2"
+            >
+              <button
+                onClick={handleConfirm}
+                className="flex items-center gap-2 px-8 py-4 rounded-xl bg-[--accent] text-[--bg] font-semibold hover:opacity-90 transition"
+              >
+                <CheckCircle size={20} />
+                Confirm Answer
+              </button>
+              <p className="text-xs text-[--text]/40">Review your choice before confirming</p>
+            </motion.div>
+          )}
           {isAnswered && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}

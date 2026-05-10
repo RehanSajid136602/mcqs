@@ -243,7 +243,7 @@ export const CODING_TOPICS: TopicData[] = [
         title: "Dictionary Comprehension",
         code: "# Create dict from numbers\nsquares = {x: x**2 for x in range(5)}\nprint(squares)\n\n# Filter existing dict\nscores = {\"Ali\": 85, \"Sara\": 92, \"Ahmed\": 78}\npassed = {k: v for k, v in scores.items() if v >= 80}\nprint(passed)",
         explanation: "Dictionary comprehension creates dicts from iterables with optional filtering.",
-        expectedOutput: "{0: 0, 1: 1, 4: 4, 9: 9, 16: 16}\n{'Ali': 85, 'Sara': 92}",
+        expectedOutput: "{0: 0, 1: 1, 2: 4, 3: 9, 4: 16}\n{'Ali': 85, 'Sara': 92}",
       },
     ],
     questions: [

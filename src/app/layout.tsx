@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, DM_Sans } from "next/font/google";
 import "./globals.css";
 import "katex/dist/katex.min.css";
+import EarlyDevPopup from "@/components/EarlyDevPopup";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -29,6 +30,7 @@ export default function RootLayout({
     <html lang="en" className={`${playfair.variable} ${dmSans.variable}`}>
       <body className="min-h-screen bg-[--bg] text-[--text] font-sans antialiased">
         {children}
+        <EarlyDevPopup />
       </body>
     </html>
   );

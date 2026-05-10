@@ -165,13 +165,13 @@
                 {
                   "q": "The mass of Earth is $6 \\times 10^{24}$ kg and radius is $6.4 \\times 10^6$ m. The value of $g$ at a height of 3600 km above Earth's surface is:",
                   "options": [
-                    "$4.9 \\text{ m/s}^2$",
+                    "$4.0 \\text{ m/s}^2$",
                     "$9.8 \\text{ m/s}^2$",
                     "$6.4 \\text{ m/s}^2$",
                     "$5.6 \\text{ m/s}^2$"
                   ],
                   "correct": 0,
-                  "explanation": "The correct answer is $4.9 \\text{ m/s}^2$ because as we move to a height of 3600 km above Earth's surface, the distance from the center of the Earth increases, resulting in a decrease in the gravitational force and thus a decrease in the acceleration due to gravity, which can be calculated using the formula $g' = \\frac{g}{(1 + \\frac{h}{R})^2}$, where $g'$ is the new acceleration due to gravity, $g$ is the acceleration due to gravity at the surface, $h$ is the height above the surface, and $R$ is the radius of the Earth. By plugging in the given values, we can calculate the value of $g'$ to be approximately $4.9 \\text{ m/s}^2$."
+                  "explanation": "The correct answer is $4.0 \\text{ m/s}^2$. Using $g' = \\frac{GM}{(R + h)^2}$ with $G = 6.67 \\times 10^{-11}$, $M = 6 \\times 10^{24}$ kg, $R = 6.4 \\times 10^6$ m, and $h = 3.6 \\times 10^6$ m: $g' = \\frac{6.67 \\times 10^{-11} \\times 6 \\times 10^{24}}{(10 \\times 10^6)^2} = \\frac{4.0 \\times 10^{14}}{1 \\times 10^{14}} = 4.0 \\text{ m/s}^2$. As altitude increases, $g$ decreases because the distance from Earth's center increases, reducing gravitational force per the inverse-square law."
                 },
                 {
                   "q": "The orbital speed of Earth around the Sun is about:",
@@ -1658,17 +1658,6 @@
                   ],
                   "correct": 1,
                   "explanation": "When waves reinforce each other, their peaks and troughs align, creating a larger combined amplitude. This alignment results in stronger wave intensity, which is the defining characteristic of constructive interference. The ripple tank experiment visually demonstrates this as brighter or more pronounced wave patterns where the waves add together."
-                },
-                {
-                  "q": "The Compton wavelength $\\frac{h}{m_e c}$ has a value of approximately:",
-                  "options": [
-                    "0.00243 nm",
-                    "0.0243 nm",
-                    "0.243 nm",
-                    "2.43 nm"
-                  ],
-                  "correct": 0,
-                  "explanation": "The Compton wavelength formula \\( \\frac{h}{m_e c} \\) combines fundamental constants: Planck’s constant (\\( h \\)), electron mass (\\( m_e \\)), and the speed of light (\\( c \\)). When calculated, these values yield a result on the order of \\( 2.43 \\times 10^{-12} \\) meters, which converts to **0.00243 nm**. This extremely small scale aligns with quantum phenomena, distinguishing it from larger options that do not match the derived value."
                 }
               ]
             },
@@ -8822,7 +8811,7 @@
                   "explanation": "The narrator lost his self-respect because swearing to the tax form under intense scrutiny made him feel humiliated and stripped of dignity, highlighting the emotional toll of the dehumanizing process. The story emphasizes psychological impact over material loss. This reflects the theme of individual vulnerability against bureaucratic power."
                 },
                 {
-                  "q": "What does the story criticize?",
+                  "q": "What does The Income Tax Man criticize?",
                   "options": [
                     "Honest taxpayers",
                     "The tax system and evasion",
@@ -9010,7 +8999,7 @@
                   "explanation": "The Nightingale is mentioned in the Rubaiyat of Omar Khayyam because it symbolizes themes of love, longing, and the transient nature of life, which are central to the poem’s philosophical reflections. The bird’s presence aligns with the poetic and mystical imagery typical of Omar Khayyam’s work."
                 },
                 {
-                  "q": "What is the main theme of the poem?",
+                  "q": "What is the main theme of Rubayiat of Omar Khayyam?",
                   "options": [
                     "War and victory",
                     "Transience of life",
@@ -9364,7 +9353,7 @@
                   "explanation": "Granddad took control of the situation by making it seem like leaving was his own decision, which helped reduce tension and made the transition smoother for everyone involved. This approach prevented arguments and allowed the family to move forward without conflict. By owning the choice, he eased the emotional burden on others."
                 },
                 {
-                  "q": "What does the story criticize?",
+                  "q": "What does The Blanket criticize?",
                   "options": [
                     "Young children",
                     "Callous attitude toward elderly",
@@ -10287,7 +10276,7 @@
                   "explanation": "The correct answer is right because the phrase 'Bones, bones, bones, bones!' is actually an onomatopoeic representation of the sound of stones hitting together. This sound is mentioned in the context of the sea, where stones or pebbles are likely to be hitting against each other with the movement of the waves. The repetition of 'bones' mimics the rhythmic clattering noise of the stones."
                 },
                 {
-                  "q": "What is the main theme of the poem?",
+                  "q": "What is the main theme of The Sea?",
                   "options": [
                     "War",
                     "Power and playfulness of nature",

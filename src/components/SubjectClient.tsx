@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Check, Star, ChevronRight, History, User } from "lucide-react";
@@ -15,21 +15,8 @@ export default function SubjectClient({ subject }: SubjectClientProps) {
   const params = useParams();
   const router = useRouter();
   const [expandedChapter, setExpandedChapter] = useState<string | null>(null);
-  const [recentAttempts, setRecentAttempts] = useState<AttemptSummary[]>([]);
-  const { progress, refresh } = useProgress();
-
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
-
-  useEffect(() => {
-    const all = getAllAttempts();
-    setRecentAttempts(
-      all
-        .filter((a) => a.subjectId === subject.id && a.total > 0)
-        .slice(0, 10)
-    );
-  }, [subject.id]);
+  const { progress } = useProgress();
+  const attempts = getAllAttempts();
 
   const getChapterStats = (chapterId: string) => {
     const sets = subject.chapters.find((c) => c.id === chapterId)?.sets ?? [];
@@ -67,7 +54,7 @@ export default function SubjectClient({ subject }: SubjectClientProps) {
         {subject.name}
       </motion.h1>
 
-      {recentAttempts.length > 0 && (
+      {attempts.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -77,28 +64,31 @@ export default function SubjectClient({ subject }: SubjectClientProps) {
             <History size={14} /> Recent Activity
           </h2>
           <div className="flex gap-2 overflow-x-auto pb-2">
-            {recentAttempts.map((a) => {
-              const date = new Date(a.completedAt).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-              });
-              const colorClass =
-                a.percentage >= 80
-                  ? "border-emerald-500/30 text-emerald-400"
-                  : a.percentage >= 50
-                  ? "border-yellow-500/30 text-yellow-400"
-                  : "border-rose-500/30 text-rose-400";
-              return (
-                <button
-                  key={a.id}
-                  onClick={() => router.push(`/review/${a.id}`)}
-                  className={`shrink-0 px-3 py-2 rounded-xl border bg-[--card] text-left hover:bg-white/5 transition ${colorClass}`}
-                >
-                  <div className="text-sm font-bold">{a.percentage}%</div>
-                  <div className="text-[10px] text-[--text]/40 mt-0.5">{date}</div>
-                </button>
-              );
-            })}
+            {attempts
+              .filter((a) => a.subjectId === subject.id && a.total > 0)
+              .slice(0, 10)
+              .map((a) => {
+                const date = new Date(a.completedAt).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                });
+                const colorClass =
+                  a.percentage >= 80
+                    ? "border-emerald-500/30 text-emerald-400"
+                    : a.percentage >= 50
+                    ? "border-yellow-500/30 text-yellow-400"
+                    : "border-rose-500/30 text-rose-400";
+                return (
+                  <button
+                    key={a.id}
+                    onClick={() => router.push(`/review/${a.id}`)}
+                    className={`shrink-0 px-3 py-2 rounded-xl border bg-[--card] text-left hover:bg-white/5 transition ${colorClass}`}
+                  >
+                    <div className="text-sm font-bold">{a.percentage}%</div>
+                    <div className="text-[10px] text-[--text]/40 mt-0.5">{date}</div>
+                  </button>
+                );
+              })}
           </div>
         </motion.div>
       )}

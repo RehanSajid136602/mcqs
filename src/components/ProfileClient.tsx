@@ -85,11 +85,6 @@ function formatDateTime(iso: string): string {
 
 export default function ProfileClient({ subjects }: ProfileClientProps) {
   const router = useRouter();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const { setMap, subjectMap } = useMemo(() => {
     const sMap = new Map<string, SetInfo>();
@@ -106,16 +101,6 @@ export default function ProfileClient({ subjects }: ProfileClientProps) {
   }, [subjects]);
 
   const { attempts, progress, overall, subjectAggregates, setAggregates } = useMemo(() => {
-    if (!mounted) {
-      return {
-        attempts: [] as AttemptSummary[],
-        progress: {} as Record<string, SetProgress>,
-        overall: null,
-        subjectAggregates: [] as SubjectAggregate[],
-        setAggregates: [] as SetAggregate[],
-      };
-    }
-
     const allAttempts = getAllAttempts();
     const allProgress = getAllProgress();
 
@@ -186,23 +171,14 @@ export default function ProfileClient({ subjects }: ProfileClientProps) {
     setAggregates.sort((a, b) => new Date(b.lastAttemptDate).getTime() - new Date(a.lastAttemptDate).getTime());
 
     return { attempts: allAttempts, progress: allProgress, overall, subjectAggregates, setAggregates };
-  }, [mounted, setMap, subjectMap]);
+  }, [subjects, setMap, subjectMap]);
 
   const recentAttempts = useMemo(() => {
-    if (!mounted) return [];
     return [...attempts]
       .filter((a) => a.completedAt)
       .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())
       .slice(0, 20);
-  }, [attempts, mounted]);
-
-  if (!mounted) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-pulse text-[--text]">Loading profile...</div>
-      </div>
-    );
-  }
+  }, [attempts]);
 
   return (
     <div className="min-h-screen px-4 sm:px-6 lg:px-8 py-8">

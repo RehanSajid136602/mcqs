@@ -1,11 +1,15 @@
 "use client";
-import { useState, useCallback } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 import type { SetStats, AttemptSummary } from "@/types";
 
 const STATS_KEY = "mcq_stats";
 
-function getStats(): Record<string, SetStats> {
-  if (typeof window === "undefined") return {};
+function subscribe(callback: () => void) {
+  window.addEventListener("storage", callback);
+  return () => window.removeEventListener("storage", callback);
+}
+
+function getSnapshot(): Record<string, SetStats> {
   try {
     return JSON.parse(localStorage.getItem(STATS_KEY) ?? "{}");
   } catch {
@@ -13,8 +17,8 @@ function getStats(): Record<string, SetStats> {
   }
 }
 
-function setStats(data: Record<string, SetStats>) {
-  localStorage.setItem(STATS_KEY, JSON.stringify(data));
+function getServerSnapshot() {
+  return {};
 }
 
 export function recalculateStats(attempts: AttemptSummary[]) {
@@ -49,16 +53,14 @@ export function recalculateStats(attempts: AttemptSummary[]) {
     };
   }
 
-  setStats(result);
+  localStorage.setItem(STATS_KEY, JSON.stringify(result));
   return result;
 }
 
 export function useStats() {
-  const [stats, setStatsState] = useState<Record<string, SetStats>>({});
+  const stats = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-  const refresh = useCallback(() => {
-    setStatsState(getStats());
-  }, []);
+  const refresh = useCallback(() => {}, []);
 
   return {
     stats,

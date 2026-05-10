@@ -2,13 +2,19 @@ import { readFileSync, writeFileSync, readdirSync } from "fs";
 import { join } from "path";
 import OpenAI from "openai";
 
+const API_KEY = process.env.NVIDIA_API_KEY;
+
+if (!API_KEY) {
+  console.error("FATAL: NVIDIA_API_KEY is not set.");
+  console.error("Copy .env.local.example to .env.local and add your NVIDIA API key.");
+  process.exit(1);
+}
+
 const DATA_FILE = "data/data.json";
-const CONTENT_BASE = "/home/rehan/Documents/test";
+const CONTENT_BASE = process.env.CONTENT_DIR ?? "/home/rehan/Documents/test";
 const RATE_LIMIT_MS = 1500;
 const TIMEOUT_MS = 15000;
 const RETRY_DELAY_MS = 10000;
-const API_KEY = "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";
-
 const client = new OpenAI({
   baseURL: "https://integrate.api.nvidia.com/v1",
   apiKey: API_KEY,

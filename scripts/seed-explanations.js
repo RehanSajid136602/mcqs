@@ -3,7 +3,7 @@ import { join } from "path";
 import OpenAI from "openai";
 
 const DATA_FILE = "data/data.json";
-const CONTENT_BASE = "/home/rehan/Documents/test";
+const CONTENT_BASE = process.env.CONTENT_DIR ?? "/home/rehan/Documents/test";
 const RATE_LIMIT_MS = 2000; 
 const TIMEOUT_MS = 60000;
 const RETRY_DELAY_MS = 15000; 

@@ -1,30 +1,33 @@
 "use client";
-import { useState, useCallback } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 import type { AttemptSummary, AttemptDetail, QuestionAttempt } from "@/types";
 
 const ATTEMPTS_KEY = "mcq_attempts";
 const DETAILS_KEY = "mcq_attempt_details";
 
+function subscribe(callback: () => void) {
+  window.addEventListener("storage", callback);
+  return () => window.removeEventListener("storage", callback);
+}
+
 function getAttempts(): AttemptSummary[] {
-  if (typeof window === "undefined") return [];
   try {
-    return JSON.parse(localStorage.getItem(ATTEMPTS_KEY) ?? "[]");
+    return JSON.parse(localStorage.getItem(ATTEMPTS_KEY) ?? "[]") as AttemptSummary[];
   } catch {
-    return [];
+    return [] as AttemptSummary[];
+  }
+}
+
+function getDetails(): Record<string, AttemptDetail> {
+  try {
+    return JSON.parse(localStorage.getItem(DETAILS_KEY) ?? "{}") as Record<string, AttemptDetail>;
+  } catch {
+    return {} as Record<string, AttemptDetail>;
   }
 }
 
 function setAttempts(data: AttemptSummary[]) {
   localStorage.setItem(ATTEMPTS_KEY, JSON.stringify(data));
-}
-
-function getDetails(): Record<string, AttemptDetail> {
-  if (typeof window === "undefined") return {};
-  try {
-    return JSON.parse(localStorage.getItem(DETAILS_KEY) ?? "{}");
-  } catch {
-    return {};
-  }
 }
 
 function setDetails(data: Record<string, AttemptDetail>) {
@@ -97,15 +100,10 @@ export function getAllAttempts(): AttemptSummary[] {
 }
 
 export function useAttemptHistory() {
-  const [attempts, setAttemptsState] = useState<AttemptSummary[]>([]);
-
-  const refresh = useCallback(() => {
-    setAttemptsState(getAttempts());
-  }, []);
+  const attempts = useSyncExternalStore(subscribe, getAttempts, () => []);
 
   return {
     attempts,
-    refresh,
     createAttempt,
     finalizeAttempt,
     getAttemptsForSet,

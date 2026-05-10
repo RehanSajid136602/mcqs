@@ -10,7 +10,7 @@ cp .env.local.example .env.local
 # Edit .env.local → add NVIDIA_NIM_API_KEY
 
 # 2. Install deps
-npm install --legacy-peer-deps
+npm install
 
 # 3. Generate MCQs (optional — data/data.json already has sample data)
 node scripts/generate-mcqs.js

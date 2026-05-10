@@ -4,7 +4,7 @@ import { join, basename } from "path";
 import { glob } from "glob";
 import OpenAI from "openai";
 
-const CONTENT_DIR = "/home/rehan/Documents/test";
+const CONTENT_DIR = process.env.CONTENT_DIR ?? "/home/rehan/Documents/test";
 const OUTPUT_FILE = "data/data.json";
 const SAMPLE_FILE = "data/data.sample.json";
 
@@ -103,9 +103,15 @@ async function main() {
     }
   }
 
+  if (!process.env.NVIDIA_API_KEY) {
+    console.error("FATAL: NVIDIA_API_KEY environment variable is not set.");
+    console.error("Copy .env.local.example to .env.local and add your NVIDIA API key.");
+    process.exit(1);
+  }
+
   const client = new OpenAI({
     baseURL: "https://integrate.api.nvidia.com/v1",
-    apiKey: process.env.NVIDIA_API_KEY ?? "",
+    apiKey: process.env.NVIDIA_API_KEY,
   });
 
   const subjectDirs = Object.entries(SUBJECT_MAP);

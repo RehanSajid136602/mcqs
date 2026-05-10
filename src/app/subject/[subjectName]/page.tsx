@@ -1,6 +1,13 @@
-import { getSubject } from "@/lib/data.server";
+import { getSubject, getAllSubjects } from "@/lib/data.server";
 import { notFound } from "next/navigation";
 import SubjectClient from "@/components/SubjectClient";
+
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const subjects = getAllSubjects();
+  return subjects.map((s) => ({ subjectName: s.id }));
+}
 
 interface Props {
   params: Promise<{ subjectName: string }>;

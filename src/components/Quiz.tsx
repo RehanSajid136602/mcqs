@@ -1,11 +1,11 @@
 // CAVEMAN: large component. read only relevant section.
 "use client";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, X, ChevronRight, RotateCcw, ArrowLeft, History, User } from "lucide-react";
 import type { MCQSet, QuestionAttempt } from "@/types";
-import { saveProgress } from "@/hooks/useProgress";
+import { useProgress } from "@/hooks/useProgress";
 import { createAttempt as createAttemptFn, finalizeAttempt } from "@/hooks/useAttemptHistory";
 import KatexRenderer from "./KatexRenderer";
 import ExplanationCard from "./ExplanationCard";
@@ -33,6 +33,15 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
+function buildShuffledQuestions(set: MCQSet): ShuffledQuestion[] {
+  return set.questions.map((q, origIdx) => {
+    const opts = q.options.map((o, i) => ({ text: o, origIdx: i }));
+    const shuffledOpts = shuffle(opts);
+    const newCorrect = shuffledOpts.findIndex((o) => o.origIdx === q.correct);
+    return { q: q.q, options: shuffledOpts.map((o) => o.text), correct: newCorrect, originalIndex: origIdx };
+  });
+}
+
 function Label({ score, total }: { score: number; total: number }) {
   const pct = total > 0 ? Math.round((score / total) * 100) : 0;
   if (pct >= 80) return <span className="text-emerald-400">Excellent!</span>;
@@ -42,6 +51,7 @@ function Label({ score, total }: { score: number; total: number }) {
 
 export default function Quiz({ set, subjectId, chapterId, onBack }: QuizProps) {
   const router = useRouter();
+  const { saveProgress } = useProgress();
   const [questions, setQuestions] = useState<ShuffledQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -55,16 +65,7 @@ export default function Quiz({ set, subjectId, chapterId, onBack }: QuizProps) {
   useEffect(() => {
     const id = createAttemptFn(set.id, subjectId, chapterId);
     setAttemptId(id);
-
-    const questionsWithIndex = set.questions.map((q, i) => ({ ...q, _origIdx: i }));
-    const shuffled = shuffle(questionsWithIndex).map((q) => {
-      const opts = q.options.map((o, i) => ({ text: o, origIdx: i }));
-      const shuffledOpts = shuffle(opts);
-      const correctOrig = q.correct;
-      const newCorrect = shuffledOpts.findIndex((o) => o.origIdx === correctOrig);
-      return { q: q.q, options: shuffledOpts.map((o) => o.text), correct: newCorrect, originalIndex: q._origIdx };
-    });
-    setQuestions(shuffled);
+    setQuestions(buildShuffledQuestions(set));
     setIsShuffled(true);
   }, [set, subjectId, chapterId]);
 
@@ -112,15 +113,7 @@ export default function Quiz({ set, subjectId, chapterId, onBack }: QuizProps) {
     questionAttempts.current = [];
     const id = createAttemptFn(set.id, subjectId, chapterId);
     setAttemptId(id);
-    const questionsWithIndex = set.questions.map((q, i) => ({ ...q, _origIdx: i }));
-    const shuffled = shuffle(questionsWithIndex).map((q) => {
-      const opts = q.options.map((o, i) => ({ text: o, origIdx: i }));
-      const shuffledOpts = shuffle(opts);
-      const correctOrig = q.correct;
-      const newCorrect = shuffledOpts.findIndex((o) => o.origIdx === correctOrig);
-      return { q: q.q, options: shuffledOpts.map((o) => o.text), correct: newCorrect, originalIndex: q._origIdx };
-    });
-    setQuestions(shuffled);
+    setQuestions(buildShuffledQuestions(set));
     setCurrentIndex(0);
     setSelectedIndex(null);
     setIsAnswered(false);

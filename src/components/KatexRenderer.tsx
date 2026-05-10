@@ -1,13 +1,19 @@
 "use client";
-import { useMemo } from "react";
-import { InlineMath } from "react-katex";
-import "katex/dist/katex.min.css";
+import { useMemo, useState, useEffect } from "react";
 
 interface KatexRendererProps {
   text: string;
 }
 
 export default function KatexRenderer({ text }: KatexRendererProps) {
+  const [InlineMath, setInlineMath] = useState<any>(null);
+
+  useEffect(() => {
+    import("react-katex").then((mod) => {
+      setInlineMath(() => mod.InlineMath);
+    });
+  }, []);
+
   const segments = useMemo(() => {
     const parts: Array<{ type: "text" | "math"; value: string }> = [];
     const regex = /\$([^$]+)\$/g;
@@ -33,7 +39,11 @@ export default function KatexRenderer({ text }: KatexRendererProps) {
     <>
       {segments.map((seg, i) =>
         seg.type === "math" ? (
-          <InlineMath key={i} math={seg.value} />
+          InlineMath ? (
+            <InlineMath key={i} math={seg.value} />
+          ) : (
+            <span key={i} className="opacity-30 select-none">[m]</span>
+          )
         ) : (
           <span key={i}>{seg.value}</span>
         )

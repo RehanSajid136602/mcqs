@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /quiz/
+Disallow: /review/
+Disallow: /profile/
+Allow: /

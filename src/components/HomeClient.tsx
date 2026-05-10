@@ -56,10 +56,8 @@ interface HomeClientProps {
 
 export default function HomeClient({ subjects }: HomeClientProps) {
   const router = useRouter();
-  const { progress, refresh } = useProgress();
+  const { progress } = useProgress();
   const [subjectStats, setSubjectStats] = useState<Record<string, SubjectStats>>({});
-
-  useEffect(() => { refresh(); }, [refresh]);
 
   useEffect(() => {
     const stats: Record<string, SubjectStats> = {};

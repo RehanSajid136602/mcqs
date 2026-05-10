@@ -1,48 +1,76 @@
 "use client";
-import { useState, useCallback } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 import type { SetProgress } from "@/types";
 
 const STORAGE_KEY = "mcq_progress";
+const EMPTY_PROGRESS: Record<string, SetProgress> = {};
 
-function getStorage(): Record<string, SetProgress> {
-  if (typeof window === "undefined") return {};
+let cached: Record<string, SetProgress> | null = null;
+const listeners = new Set<() => void>();
+
+function notify() {
+  listeners.forEach((fn) => fn());
+}
+
+function readStore(): Record<string, SetProgress> {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}");
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}") as Record<string, SetProgress>;
   } catch {
-    return {};
+    return { ...EMPTY_PROGRESS };
   }
 }
 
-function setStorage(data: Record<string, SetProgress>) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
-
-export function getProgress(setId: string): SetProgress | null {
-  return getStorage()[setId] ?? null;
-}
-
-export function saveProgress(setId: string, score: number, total: number) {
-  const existing = getStorage();
-  const current = existing[setId];
-  existing[setId] = {
-    highScore: current ? Math.max(current.highScore, score) : score,
-    total,
-    attempts: (current?.attempts ?? 0) + 1,
-    lastAttempt: new Date().toISOString(),
+function subscribe(callback: () => void) {
+  listeners.add(callback);
+  const onStorage = () => {
+    cached = null;
+    notify();
   };
-  setStorage(existing);
+  window.addEventListener("storage", onStorage);
+  return () => {
+    listeners.delete(callback);
+    window.removeEventListener("storage", onStorage);
+  };
+}
+
+function getSnapshot(): Record<string, SetProgress> {
+  if (cached === null) {
+    cached = readStore();
+  }
+  return cached;
+}
+
+function getServerSnapshot(): Record<string, SetProgress> {
+  return EMPTY_PROGRESS;
+}
+
+function setSnapshot(data: Record<string, SetProgress>) {
+  cached = data;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  notify();
 }
 
 export function getAllProgress(): Record<string, SetProgress> {
-  return getStorage();
+  return getSnapshot();
 }
 
 export function useProgress() {
-  const [progress, setProgress] = useState<Record<string, SetProgress>>({});
+  const progress = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-  const refresh = useCallback(() => {
-    setProgress(getStorage());
+  const saveProgress = useCallback((setId: string, score: number, total: number) => {
+    const existing = getSnapshot();
+    const current = existing[setId];
+    const next = {
+      ...existing,
+      [setId]: {
+        highScore: current ? Math.max(current.highScore, score) : score,
+        total,
+        attempts: (current?.attempts ?? 0) + 1,
+        lastAttempt: new Date().toISOString(),
+      },
+    };
+    setSnapshot(next);
   }, []);
 
-  return { progress, refresh, getProgress, saveProgress, getAllProgress };
+  return { progress, saveProgress };
 }

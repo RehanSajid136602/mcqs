@@ -42,6 +42,20 @@ function ExampleCard({ example, index }: { example: CodeExample; index: number }
   );
 }
 
+function DifficultyBadge({ difficulty }: { difficulty: "easy" | "medium" | "hard" }) {
+  const colors = {
+    easy: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
+    medium: "bg-amber-500/10 text-amber-400 border-amber-500/30",
+    hard: "bg-red-500/10 text-red-400 border-red-500/30",
+  };
+  const labels = { easy: "Easy", medium: "Medium", hard: "Hard" };
+  return (
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${colors[difficulty]}`}>
+      {labels[difficulty]}
+    </span>
+  );
+}
+
 function PracticeCard({ question, index }: { question: PracticeQuestion; index: number }) {
   const [showHint, setShowHint] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
@@ -54,11 +68,14 @@ function PracticeCard({ question, index }: { question: PracticeQuestion; index: 
       className="bg-slate-900/40 border border-white/10 rounded-2xl p-6 hover:border-cyan-500/30 transition-all duration-300"
     >
       <div className="flex items-start gap-4 mb-4">
-        <span className="flex items-center justify-center w-10 h-10 rounded-full bg-cyan-500/10 text-cyan-400 font-bold text-lg">
+        <span className="flex items-center justify-center w-10 h-10 rounded-full bg-cyan-500/10 text-cyan-400 font-bold text-lg shrink-0">
           {question.id}
         </span>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-[--text] mb-2">{question.title}</h3>
+          <div className="flex items-center gap-2 mb-2">
+            <h3 className="text-lg font-semibold text-[--text]">{question.title}</h3>
+            <DifficultyBadge difficulty={question.difficulty} />
+          </div>
           <p className="text-[--text]/60">{question.question}</p>
         </div>
       </div>

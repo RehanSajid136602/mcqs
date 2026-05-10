@@ -14,6 +14,7 @@ export interface PracticeQuestion {
   hint: string;
   solution: string;
   expectedOutput?: string;
+  difficulty: "easy" | "medium" | "hard";
 }
 
 export interface TopicData {
@@ -76,6 +77,7 @@ export const CODING_TOPICS: TopicData[] = [
         hint: "Slicing includes start index but excludes end index. Index 1 is 'chemistry', index 4 is excluded.",
         solution: "L = ['physics', 'chemistry', 'biology', 'math', 'english']\nprint(L[1:4])\n# Output: ['chemistry', 'biology', 'math']",
         expectedOutput: "['chemistry', 'biology', 'math']",
+        difficulty: "easy",
       },
       {
         id: 2,
@@ -85,6 +87,7 @@ export const CODING_TOPICS: TopicData[] = [
         hint: "append() adds the entire object as one element. extend() unpacks and adds each element individually.",
         solution: "my_list = [1, 2, 3]\nmy_list.append([4, 5])   # [1, 2, 3, [4, 5]]\nmy_list.extend([6, 7])  # [1, 2, 3, [4, 5], 6, 7]\nprint(my_list)",
         expectedOutput: "[1, 2, 3, [4, 5], 6, 7]",
+        difficulty: "easy",
       },
       {
         id: 3,
@@ -92,8 +95,9 @@ export const CODING_TOPICS: TopicData[] = [
         question: "Write code to get all marks greater than 75:",
         code: "marks = [82, 45, 90, 67, 88, 55, 91, 73]\n# Expected: [82, 90, 88, 91]",
         hint: "Use list comprehension with a condition: [item for item in iterable if condition]",
-        solution: "# List comprehension\nmarks = [82, 45, 90, 67, 88, 55, 91, 73]\nhigh_marks = [m for m in marks if m > 75]\nprint(high_marks)",
+        solution: "# List comprehension\nmarks = [82, 45, 90, 67, 88, 55, 91, 73]\nresult = [m for m in marks if m > 75]\nprint(result)",
         expectedOutput: "[82, 90, 88, 91]",
+        difficulty: "medium",
       },
       {
         id: 4,
@@ -101,8 +105,9 @@ export const CODING_TOPICS: TopicData[] = [
         question: "Fix this code to correctly remove all even numbers:",
         code: "numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\nfor num in numbers:\n    if num % 2 == 0:\n        numbers.remove(num)\nprint(numbers)",
         hint: "Modifying a list while iterating causes elements to be skipped. Iterate over a copy instead.",
-        solution: "# Solution 1: Iterate over copy\nnumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\nfor num in numbers[:]:  # Creates a copy\n    if num % 2 == 0:\n        numbers.remove(num)\nprint(numbers)\n\n# Solution 2: List comprehension\nnumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\nnumbers = [x for x in numbers if x % 2 != 0]\nprint(numbers)",
+        solution: "# Solution 1: Iterate over copy\nnumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\nfor num in numbers[:]:  # Creates a copy\n    if num % 2 == 0:\n        numbers.remove(num)\nprint(numbers)\n\n# Solution 2: List comprehension (recommended)\nnumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\nnumbers = [n for n in numbers if n % 2 != 0]\nprint(numbers)",
         expectedOutput: "[1, 3, 5, 7, 9]\n[1, 3, 5, 7, 9]",
+        difficulty: "hard",
       },
       {
         id: 5,
@@ -110,8 +115,9 @@ export const CODING_TOPICS: TopicData[] = [
         question: "Filter words that have more than 4 characters:",
         code: 'words = ["apple", "cat", "computer", "dog", "algorithm", "book", "programming"]\n# Expected: [\'apple\', \'computer\', \'algorithm\', \'programming\']',
         hint: "Use len() in your condition: [word for word in words if len(word) > 4]",
-        solution: 'words = ["apple", "cat", "computer", "dog", "algorithm", "book", "programming"]\nlong_words = [word for word in words if len(word) > 4]\nprint(long_words)',
+        solution: 'words = ["apple", "cat", "computer", "dog", "algorithm", "book", "programming"]\nlong_words = [w for w in words if len(w) > 4]\nprint(long_words)',
         expectedOutput: "['apple', 'computer', 'algorithm', 'programming']",
+        difficulty: "medium",
       },
     ],
   },
@@ -160,6 +166,7 @@ export const CODING_TOPICS: TopicData[] = [
         hint: "Index 1 is the second element. -1 is the last element.",
         solution: "point = (5, 10, 15)\nprint(point[1])    # 10\nprint(point[-1])   # 15",
         expectedOutput: "10\n15",
+        difficulty: "easy",
       },
       {
         id: 2,
@@ -169,6 +176,7 @@ export const CODING_TOPICS: TopicData[] = [
         hint: "Unpacking assigns each element of the tuple to a variable in order.",
         solution: "a, b, c = (100, 200, 300)\nx, y = a, b\nz = c\nprint(f\"x={x}, y={y}, z={z}\")",
         expectedOutput: "x=100, y=200, z=300",
+        difficulty: "easy",
       },
       {
         id: 3,
@@ -178,6 +186,7 @@ export const CODING_TOPICS: TopicData[] = [
         hint: "Without a trailing comma, (42) is just an integer in parentheses, not a tuple.",
         solution: "single = (42)\nprint(type(single))      # <class 'int'>\n\nsingle_tuple = (42,)\nprint(type(single_tuple))  # <class 'tuple'>",
         expectedOutput: "<class 'int'>\n<class 'tuple'>",
+        difficulty: "medium",
       },
       {
         id: 4,
@@ -187,6 +196,7 @@ export const CODING_TOPICS: TopicData[] = [
         hint: "First index gets the inner tuple, second index gets the element.",
         solution: 'data = (("A", "B"), ("C", "D"))\nprint(data[0][1])   # B\nprint(data[1][0])  # C',
         expectedOutput: "B\nC",
+        difficulty: "medium",
       },
       {
         id: 5,
@@ -196,6 +206,7 @@ export const CODING_TOPICS: TopicData[] = [
         hint: "count() returns total occurrences. index() returns position of first occurrence.",
         solution: "numbers = (1, 2, 3, 2, 4, 2, 5)\nprint(numbers.count(2))   # 3 (appears at indices 1, 3, 5)\nprint(numbers.index(3))  # 2 (first occurrence)",
         expectedOutput: "3\n2",
+        difficulty: "easy",
       },
     ],
   },
@@ -244,6 +255,7 @@ export const CODING_TOPICS: TopicData[] = [
         hint: "Use square bracket notation for direct access. get() returns default if key missing.",
         solution: 'info = {"name": "Sara", "age": 18, "city": "Karachi"}\nprint(info["age"])                    # 18\nprint(info.get("country", "Pakistan"))  # Pakistan (default)',
         expectedOutput: "18\nPakistan",
+        difficulty: "easy",
       },
       {
         id: 2,
@@ -253,6 +265,7 @@ export const CODING_TOPICS: TopicData[] = [
         hint: "New keys are added, existing keys are updated.",
         solution: 'd = {"a": 1, "b": 2}\nd["c"] = 3        # Add new key\nd["a"] = 10       # Update existing\nd.update({"d": 4})  # Add another\nprint(d)',
         expectedOutput: "{'a': 10, 'b': 2, 'c': 3, 'd': 4}",
+        difficulty: "medium",
       },
       {
         id: 3,
@@ -262,6 +275,7 @@ export const CODING_TOPICS: TopicData[] = [
         hint: "Iterating over keys lets you access each value with data[key].",
         solution: 'data = {"x": 10, "y": 20, "z": 30}\ntotal = 0\nfor key in data:\n    total += data[key]\nprint(total)  # 10 + 20 + 30',
         expectedOutput: "60",
+        difficulty: "easy",
       },
       {
         id: 4,
@@ -271,6 +285,7 @@ export const CODING_TOPICS: TopicData[] = [
         hint: "Dict comprehension: {key_expression: value_expression for item in iterable}",
         solution: 'words = ["apple", "cat", "computer"]\nlengths = {word: len(word) for word in words}\nprint(lengths)',
         expectedOutput: "{'apple': 5, 'cat': 3, 'computer': 8}",
+        difficulty: "medium",
       },
       {
         id: 5,
@@ -278,8 +293,9 @@ export const CODING_TOPICS: TopicData[] = [
         question: "Filter students with score >= 80:",
         code: 'scores = {"Ali": 85, "Sara": 92, "Ahmed": 78, "Fatima": 88}\n# Expected: {\'Ali\': 85, \'Sara\': 92, \'Fatima\': 88}',
         hint: "Use items() with a condition to filter key-value pairs.",
-        solution: 'scores = {"Ali": 85, "Sara": 92, "Ahmed": 78, "Fatima": 88}\nhigh_scores = {k: v for k, v in scores.items() if v >= 80}\nprint(high_scores)',
+        solution: 'scores = {"Ali": 85, "Sara": 92, "Ahmed": 78, "Fatima": 88}\nresult = {k: v for k, v in scores.items() if v >= 80}\nprint(result)',
         expectedOutput: "{'Ali': 85, 'Sara': 92, 'Fatima': 88}",
+        difficulty: "hard",
       },
     ],
   },
@@ -333,14 +349,16 @@ export const CODING_TOPICS: TopicData[] = [
         hint: "PRIMARY KEY auto-increments by default in SQLite.",
         solution: "CREATE TABLE books (\n    id INTEGER PRIMARY KEY,\n    title TEXT NOT NULL,\n    author TEXT,\n    price INTEGER\n);",
         expectedOutput: "Table created: books",
+        difficulty: "easy",
       },
       {
         id: 2,
         title: "INSERT Data",
         question: "Insert two books into the books table.",
         hint: "List column names, then multiple value sets.",
-        solution: "INSERT INTO books (title, author, price) VALUES\n    ('Python Basics', 'Ahmed', 500),\n    ('Data Science', 'Sara', 750);",
+        solution: "INSERT INTO books (title, author, price) VALUES\n    ('Python Basics', 'Ali Khan', 650),\n    ('Database Design', 'Sara Ahmed', 850);",
         expectedOutput: "2 rows inserted",
+        difficulty: "easy",
       },
       {
         id: 3,
@@ -349,6 +367,7 @@ export const CODING_TOPICS: TopicData[] = [
         hint: "Use WHERE for condition, ORDER BY for sorting (DESC for descending).",
         solution: "SELECT * FROM books\nWHERE price > 600\nORDER BY price DESC;",
         expectedOutput: "Books with price > 600 displayed",
+        difficulty: "medium",
       },
       {
         id: 4,
@@ -357,14 +376,16 @@ export const CODING_TOPICS: TopicData[] = [
         hint: "UPDATE sets new values, WHERE identifies which rows.",
         solution: "UPDATE books\nSET author = 'Ali Khan'\nWHERE title = 'Python Basics';",
         expectedOutput: "1 row updated",
+        difficulty: "medium",
       },
       {
         id: 5,
         title: "GROUP BY with COUNT",
         question: "Count how many books each author has (show author and count).",
         hint: "GROUP BY groups rows, COUNT() counts in each group.",
-        solution: "SELECT author, COUNT(*) as book_count\nFROM books\nGROUP BY author;",
+        solution: "SELECT author, COUNT(*) AS book_count\nFROM books\nGROUP BY author;",
         expectedOutput: "Author and book count displayed",
+        difficulty: "hard",
       },
     ],
   },

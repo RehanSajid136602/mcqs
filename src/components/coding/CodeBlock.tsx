@@ -22,7 +22,7 @@ export default function CodeBlock({ code, language = "python", title, expectedOu
   };
 
   return (
-    <div className="rounded-xl overflow-hidden border border-white/10 bg-slate-900/50">
+    <div className="rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--bg-surface)]">
       {title && (
         <div className="px-4 py-2 bg-slate-800/50 border-b border-white/5 flex items-center gap-2">
           <span className="text-xs text-[--text]/50 uppercase tracking-wider">{title}</span>

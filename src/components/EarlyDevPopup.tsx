@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertTriangle, X } from "lucide-react";
@@ -38,29 +39,29 @@ export default function EarlyDevPopup() {
             transition={{ duration: 0.3 }}
             className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md px-4"
           >
-            <div className="bg-[#111827] border border-amber-500/30 rounded-2xl p-8 shadow-2xl shadow-amber-500/5">
+            <div className="bg-[var(--bg-surface)] border border-[var(--accent)]/30 rounded-2xl p-8 shadow-2xl shadow-[var(--accent)]/5">
               <div className="flex items-start justify-between mb-4">
-                <div className="p-3 rounded-xl bg-amber-500/10">
-                  <AlertTriangle size={28} className="text-amber-400" />
+                <div className="p-3 rounded-xl bg-[var(--accent)]/10">
+                  <AlertTriangle size={28} className="text-[var(--accent)]" />
                 </div>
                 <button
                   onClick={handleDismiss}
-                  className="p-2 rounded-lg hover:bg-white/5 text-[--text]/40 hover:text-[--text] transition"
+                  className="p-2 rounded-lg hover:bg-[var(--bg-card-hover)] text-[var(--text-muted)] hover:text-[var(--text)] transition"
                 >
                   <X size={20} />
                 </button>
               </div>
-              <h2 className="text-xl font-bold text-[--text] mb-3 font-display">
+              <h2 className="text-xl font-bold text-[var(--text)] mb-3 font-display">
                 Early Development
               </h2>
-              <p className="text-[--text]/60 leading-relaxed mb-6">
+              <p className="text-[var(--text-secondary)] leading-relaxed mb-6">
                 This platform is in early development. MCQ content and explanations are being
                 actively refined. Please verify answers against your textbooks when preparing
                 for exams.
               </p>
               <button
                 onClick={handleDismiss}
-                className="w-full py-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/20 text-amber-400 font-medium transition border border-amber-500/20"
+                className="w-full py-3 rounded-xl bg-[var(--accent)]/15 hover:bg-[var(--accent)]/20 text-[var(--accent)] font-medium transition border border-[var(--accent)]/20"
               >
                 I Understand
               </button>

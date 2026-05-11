@@ -3,6 +3,8 @@ import { Playfair_Display, DM_Sans } from "next/font/google";
 import "./globals.css";
 import "katex/dist/katex.min.css";
 import EarlyDevPopup from "@/components/EarlyDevPopup";
+import Sidebar from "@/components/Sidebar";
+import { SidebarProvider } from "@/components/providers/SidebarProvider";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -29,7 +31,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfair.variable} ${dmSans.variable}`}>
       <body className="min-h-screen bg-[--bg] text-[--text] font-sans antialiased">
-        {children}
+        <SidebarProvider>
+          <div className="flex min-h-[100dvh]">
+            <Sidebar />
+            <main className="flex-1 ml-0 lg:ml-[260px] transition-all duration-300">
+              {children}
+            </main>
+          </div>
+        </SidebarProvider>
         <EarlyDevPopup />
       </body>
     </html>

@@ -29,7 +29,7 @@ function ExampleCard({ example, index }: { example: CodeExample; index: number }
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="bg-slate-900/40 border border-white/10 rounded-2xl p-6 hover:border-blue-500/30 transition-all duration-300"
+      className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl p-6 hover:border-[var(--border-hover)] transition-all duration-300"
     >
       <h3 className="text-lg font-semibold text-[--text] mb-4">{example.title}</h3>
       <CodeBlock code={example.code} language="python" expectedOutput={example.expectedOutput} />
@@ -65,7 +65,7 @@ function PracticeCard({ question, index }: { question: PracticeQuestion; index: 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="bg-slate-900/40 border border-white/10 rounded-2xl p-6 hover:border-cyan-500/30 transition-all duration-300"
+      className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl p-6 hover:border-[var(--border-hover)] transition-all duration-300"
     >
       <div className="flex items-start gap-4 mb-4">
         <span className="flex items-center justify-center w-10 h-10 rounded-full bg-cyan-500/10 text-cyan-400 font-bold text-lg shrink-0">
@@ -167,7 +167,7 @@ export default function TopicPage(topic: TopicPageProps) {
           </Link>
           <button
             onClick={() => router.push("/profile")}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[--card] border border-white/10 text-[--text]/70 hover:text-[--text] hover:border-white/20 transition"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text)] hover:border-[var(--border-hover)] transition"
           >
             <User size={18} />
             <span className="text-sm font-medium hidden sm:inline">Profile</span>
@@ -192,7 +192,7 @@ export default function TopicPage(topic: TopicPageProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-slate-900/40 border border-white/10 rounded-2xl p-6 mb-10"
+          className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl p-6 mb-10"
         >
           <h2 className="text-xl font-semibold text-[--text] mb-4">Overview</h2>
           <p className="text-[--text]/70 mb-4">{description}</p>
@@ -235,7 +235,7 @@ export default function TopicPage(topic: TopicPageProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.8 }}
-          className="mt-16 pt-8 border-t border-white/10 text-center"
+          className="mt-16 pt-8 border-t border-[var(--border)] text-center"
         >
           <div className="flex items-center justify-center gap-6">
             <Link

@@ -1,8 +1,19 @@
 "use client";
-import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+
+import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Check, Star, ChevronRight, History, User } from "lucide-react";
+import {
+  ArrowLeft,
+  BookOpen,
+  CheckCircle,
+  Star,
+  ChevronRight,
+  Play,
+  Trophy,
+  TrendingUp,
+  Clock,
+} from "lucide-react";
 import type { Subject, AttemptSummary } from "@/types";
 import { useProgress } from "@/hooks/useProgress";
 import { getAllAttempts } from "@/hooks/useAttemptHistory";
@@ -11,184 +22,401 @@ interface SubjectClientProps {
   subject: Subject;
 }
 
+const SUBJECT_ACCENTS: Record<string, { gradient: string; glow: string; text: string; border: string }> = {
+  physics: {
+    gradient: "from-amber-500/20 via-yellow-500/10 to-transparent",
+    glow: "rgba(245, 197, 24, 0.12)",
+    text: "text-amber-400",
+    border: "border-amber-500/20",
+  },
+  maths: {
+    gradient: "from-blue-500/20 via-sky-500/10 to-transparent",
+    glow: "rgba(59, 130, 246, 0.12)",
+    text: "text-blue-400",
+    border: "border-blue-500/20",
+  },
+  english: {
+    gradient: "from-pink-500/20 via-rose-500/10 to-transparent",
+    glow: "rgba(236, 72, 153, 0.12)",
+    text: "text-pink-400",
+    border: "border-pink-500/20",
+  },
+  cs: {
+    gradient: "from-purple-500/20 via-violet-500/10 to-transparent",
+    glow: "rgba(139, 92, 246, 0.12)",
+    text: "text-purple-400",
+    border: "border-purple-500/20",
+  },
+};
+
+const DEFAULT_ACCENT = SUBJECT_ACCENTS.physics;
+
+function getAccent(subjectId: string) {
+  return SUBJECT_ACCENTS[subjectId] ?? DEFAULT_ACCENT;
+}
+
+function formatDuration(seconds: number): string {
+  if (seconds < 60) return `${seconds}s`;
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return s > 0 ? `${m}m ${s}s` : `${m}m`;
+}
+
+function timeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ago`;
+}
+
 export default function SubjectClient({ subject }: SubjectClientProps) {
-  const params = useParams();
   const router = useRouter();
   const [expandedChapter, setExpandedChapter] = useState<string | null>(null);
   const { progress } = useProgress();
   const attempts = getAllAttempts();
+  const accent = getAccent(subject.id);
+
+  const subjectAttempts = useMemo(
+    () =>
+      attempts
+        .filter((a) => a.subjectId === subject.id && a.total > 0)
+        .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime()),
+    [attempts, subject.id]
+  );
+
+  const totalSets = useMemo(
+    () => subject.chapters.reduce((sum, ch) => sum + ch.sets.length, 0),
+    [subject.chapters]
+  );
+
+  const completedSets = useMemo(
+    () =>
+      subject.chapters.reduce(
+        (sum, ch) => sum + ch.sets.filter((s) => Boolean(progress[s.id])).length,
+        0
+      ),
+    [subject.chapters, progress]
+  );
+
+  const overallCompletion = totalSets > 0 ? Math.round((completedSets / totalSets) * 100) : 0;
+
+  const bestScore = useMemo(() => {
+    let best = 0;
+    for (const ch of subject.chapters) {
+      for (const s of ch.sets) {
+        const p = progress[s.id];
+        if (p && p.highScore > best) best = p.highScore;
+      }
+    }
+    return best;
+  }, [subject.chapters, progress]);
 
   const getChapterStats = (chapterId: string) => {
     const sets = subject.chapters.find((c) => c.id === chapterId)?.sets ?? [];
     const done = sets.filter((s) => Boolean(progress[s.id])).length;
-    const best = sets.reduce((best, s) => {
+    const best = sets.reduce((b, s) => {
       const p = progress[s.id];
-      return p ? Math.max(best, p.highScore) : best;
+      return p ? Math.max(b, p.highScore) : b;
     }, 0);
-    return { done, total: sets.length, best };
+    const avgScore =
+      done > 0
+        ? Math.round(
+            sets
+              .filter((s) => progress[s.id])
+              .reduce((sum, s) => sum + progress[s.id].highScore, 0) / done
+          )
+        : 0;
+    return { done, total: sets.length, best, avgScore };
   };
 
+  const stats = [
+    { label: "Chapters", value: subject.chapters.length, icon: BookOpen },
+    { label: "Quiz Sets", value: totalSets, icon: Play },
+    { label: "Completion", value: `${overallCompletion}%`, icon: TrendingUp },
+    { label: "Best Score", value: bestScore > 0 ? `${bestScore}%` : "--", icon: Trophy },
+  ];
+
   return (
-    <div className="min-h-screen px-6 py-10">
-      <div className="flex items-center justify-between mb-8">
+    <div className="min-h-[100dvh] px-4 sm:px-6 lg:px-8 py-6 sm:py-10 max-w-4xl mx-auto">
+      {/* ── Hero Section ── */}
+      <motion.div
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
+        className="relative mb-10"
+      >
+        {/* Gradient accent orb */}
+        <div
+          className="absolute -top-20 -left-20 w-[400px] h-[400px] rounded-full pointer-events-none opacity-60"
+          style={{
+            background: `radial-gradient(circle, ${accent.glow} 0%, transparent 70%)`,
+          }}
+        />
+
+        {/* Back button */}
         <button
           onClick={() => router.push("/")}
-          className="flex items-center gap-2 text-[--text]/50 hover:text-[--text] transition"
+          className="relative z-10 flex items-center gap-2 text-[var(--text-muted)] hover:text-[var(--text)] transition-colors duration-300 mb-8 group"
         >
-          <ArrowLeft size={18} /> Back to Subjects
+          <ArrowLeft
+            size={18}
+            className="group-hover:-translate-x-1 transition-transform duration-300"
+          />
+          <span className="text-sm font-medium tracking-wide">Back to Subjects</span>
         </button>
-        <button
-          onClick={() => router.push("/profile")}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[--card] border border-white/10 text-[--text]/70 hover:text-[--text] hover:border-white/20 transition"
-        >
-          <User size={18} />
-          <span className="text-sm font-medium hidden sm:inline">Profile</span>
-        </button>
-      </div>
 
-      <motion.h1
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-4xl font-bold text-[--accent] mb-10 font-display"
-      >
-        {subject.name}
-      </motion.h1>
+        {/* Subject name */}
+        <h1 className="relative z-10 font-display text-4xl sm:text-[40px] font-bold tracking-tight text-[var(--text)] leading-none mb-6">
+          {subject.name}
+        </h1>
 
-      {attempts.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
+        {/* Stats row */}
+        <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {stats.map((stat, i) => {
+            const Icon = stat.icon;
+            return (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 + i * 0.06, duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+                className="flex items-center gap-3 bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl px-4 py-3 hover:border-[var(--border-hover)] transition-colors duration-300"
+              >
+                <Icon size={18} className={accent.text} strokeWidth={1.5} />
+                <div>
+                  <div className="text-lg font-semibold text-[var(--text)] leading-tight">
+                    {stat.value}
+                  </div>
+                  <div className="text-[11px] text-[var(--text-muted)] uppercase tracking-wider font-medium">
+                    {stat.label}
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </motion.div>
+
+      {/* ── Recent Activity ── */}
+      {subjectAttempts.length > 0 && (
+        <motion.section
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-2xl mb-8"
+          transition={{ delay: 0.25, duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
+          className="mb-10"
         >
-          <h2 className="text-sm font-semibold text-[--text]/50 uppercase tracking-wider mb-3 flex items-center gap-2">
-            <History size={14} /> Recent Activity
+          <h2 className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-[0.15em] mb-3 flex items-center gap-2">
+            <Clock size={14} strokeWidth={1.5} />
+            Recent Activity
           </h2>
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            {attempts
-              .filter((a) => a.subjectId === subject.id && a.total > 0)
-              .slice(0, 10)
-              .map((a) => {
-                const date = new Date(a.completedAt).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                });
-                const colorClass =
-                  a.percentage >= 80
-                    ? "border-emerald-500/30 text-emerald-400"
-                    : a.percentage >= 50
-                    ? "border-yellow-500/30 text-yellow-400"
-                    : "border-rose-500/30 text-rose-400";
-                return (
-                  <button
-                    key={a.id}
-                    onClick={() => router.push(`/review/${a.id}`)}
-                    className={`shrink-0 px-3 py-2 rounded-xl border bg-[--card] text-left hover:bg-white/5 transition ${colorClass}`}
-                  >
-                    <div className="text-sm font-bold">{a.percentage}%</div>
-                    <div className="text-[10px] text-[--text]/40 mt-0.5">{date}</div>
-                  </button>
-                );
-              })}
+          <div className="flex gap-2.5 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-thin">
+            {subjectAttempts.slice(0, 12).map((a, i) => {
+              const pct = a.percentage;
+              const colorClass =
+                pct >= 80
+                  ? "text-emerald-400 border-emerald-500/25 bg-emerald-500/5"
+                  : pct >= 50
+                    ? "text-amber-400 border-amber-500/25 bg-amber-500/5"
+                    : "text-rose-400 border-rose-500/25 bg-rose-500/5";
+
+              return (
+                <motion.button
+                  key={a.id}
+                  initial={{ opacity: 0, scale: 0.92 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 + i * 0.04 }}
+                  onClick={() => router.push(`/review/${a.id}`)}
+                  className={`shrink-0 flex flex-col items-start gap-1 px-3.5 py-2.5 rounded-xl border text-left transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] ${colorClass}`}
+                >
+                  <div className="text-base font-bold leading-none">{pct}%</div>
+                  <div className="text-[10px] text-[var(--text-muted)] leading-none">
+                    {timeAgo(a.completedAt)}
+                  </div>
+                </motion.button>
+              );
+            })}
           </div>
-        </motion.div>
+        </motion.section>
       )}
 
-      <div className="max-w-2xl space-y-3">
-        {subject.chapters.map((chapter, idx) => {
-          const stats = getChapterStats(chapter.id);
-          const isExpanded = expandedChapter === chapter.id;
+      {/* ── Chapters ── */}
+      <section>
+        <h2 className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-[0.15em] mb-4 flex items-center gap-2">
+          <BookOpen size={14} strokeWidth={1.5} />
+          Chapters
+        </h2>
 
-          return (
-            <motion.div
-              key={chapter.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.05 }}
-            >
-              <div
-                className={`bg-[--card] border border-white/10 rounded-xl overflow-hidden transition-all ${
-                  isExpanded ? "border-[--accent]/30" : ""
+        <div className="space-y-3">
+          {subject.chapters.map((chapter, idx) => {
+            const stats = getChapterStats(chapter.id);
+            const isExpanded = expandedChapter === chapter.id;
+            const chapterNum = chapter.id.match(/chapter-(\d+)/)?.[1] ?? String(idx + 1);
+            const completionPct = stats.total > 0 ? Math.round((stats.done / stats.total) * 100) : 0;
+
+            return (
+              <motion.div
+                key={chapter.id}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 + idx * 0.05, duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+                className={`bg-[var(--bg-card)] rounded-2xl border transition-colors duration-300 overflow-hidden ${
+                  isExpanded
+                    ? "border-[var(--border-hover)]"
+                    : "border-[var(--border)] hover:border-[var(--border-hover)]"
                 }`}
               >
+                {/* Chapter header */}
                 <button
-                  onClick={() =>
-                    setExpandedChapter(isExpanded ? null : chapter.id)
-                  }
-                  className="w-full flex items-center justify-between p-5 text-left hover:bg-white/5 transition"
+                  onClick={() => setExpandedChapter(isExpanded ? null : chapter.id)}
+                  className="w-full flex items-center gap-4 p-4 sm:p-5 text-left group"
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="text-[--text]/40 text-sm font-mono w-8">
-                      {chapter.id.match(/chapter-(\d+)/)?.[1] ?? "?"}
-                    </span>
-                    <span className="text-[--text] font-medium">{chapter.name}</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    {stats.done > 0 && (
-                      <div className="flex items-center gap-1 text-sm text-emerald-400">
-                        <Check size={14} />
-                        {stats.done}
-                        {stats.best > 0 && (
-                          <span className="text-[--text]/40">· {stats.best}%</span>
-                        )}
-                      </div>
+                  {/* Chapter number badge */}
+                  <div
+                    className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold transition-colors duration-300 ${
+                      completionPct === 100
+                        ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20"
+                        : "bg-white/5 text-[var(--text-muted)] border border-[var(--border)]"
+                    }`}
+                  >
+                    {completionPct === 100 ? (
+                      <CheckCircle size={18} strokeWidth={1.5} />
+                    ) : (
+                      chapterNum
                     )}
-                    <span className="text-xs text-[--text]/40 bg-white/5 px-2 py-1 rounded-md">
-                      {chapter.sets.length} sets
-                    </span>
-                    <ChevronRight
-                      size={16}
-                      className={`text-[--text]/30 transition-transform ${
-                        isExpanded ? "rotate-90" : ""
-                      }`}
-                    />
                   </div>
+
+                  {/* Chapter info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[var(--text)] font-medium text-sm sm:text-base leading-snug truncate">
+                      {chapter.name}
+                    </div>
+                    <div className="flex items-center gap-3 mt-1.5">
+                      {/* Progress bar */}
+                      <div className="flex-1 max-w-[120px] h-1.5 bg-white/5 rounded-full overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${completionPct}%` }}
+                          transition={{ duration: 0.6, delay: 0.4 + idx * 0.05, ease: [0.32, 0.72, 0, 1] }}
+                          className={`h-full rounded-full ${
+                            completionPct === 100
+                              ? "bg-emerald-400"
+                              : completionPct > 0
+                                ? "bg-[var(--accent)]"
+                                : "bg-transparent"
+                          }`}
+                        />
+                      </div>
+                      <span className="text-[11px] text-[var(--text-muted)] tabular-nums">
+                        {stats.done}/{stats.total} sets
+                      </span>
+                      {stats.best > 0 && (
+                        <span className="flex items-center gap-1 text-[11px] text-[var(--text-muted)]">
+                          <Star size={10} className={accent.text} />
+                          {stats.best}%
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Expand chevron */}
+                  <ChevronRight
+                    size={18}
+                    className={`text-[var(--text-muted)] transition-transform duration-300 ${
+                      isExpanded ? "rotate-90" : ""
+                    }`}
+                  />
                 </button>
 
+                {/* Expanded sets */}
                 <AnimatePresence>
                   {isExpanded && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
+                      transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
                       className="overflow-hidden"
                     >
-                      <div className="px-5 pb-5 grid grid-cols-2 sm:grid-cols-3 gap-2">
-                        {chapter.sets.map((set) => {
-                          const p = progress[set.id];
-                          return (
-                            <button
-                              key={set.id}
-                              onClick={() => router.push(`/quiz/${set.id}?subjectId=${subject.id}&chapterId=${chapter.id}`)}
-                              className={`relative p-3 rounded-xl border text-left transition-all hover:border-[--accent]/50 ${
-                                p
-                                  ? "bg-emerald-500/5 border-emerald-500/20"
-                                  : "bg-white/5 border-white/10"
-                              }`}
-                            >
-                              <div className="text-[--text] font-medium text-sm">
-                                {set.label}
-                              </div>
-                              {p && (
-                                <div className="mt-1 flex items-center gap-1">
-                                  <Star size={10} className="text-[--accent]" />
-                                  <span className="text-xs text-emerald-400">
-                                    {p.highScore}%
+                      <div className="px-4 sm:px-5 pb-4 sm:pb-5 pt-1 border-t border-[var(--border)]">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                          {chapter.sets.map((set) => {
+                            const p = progress[set.id];
+                            const isCompleted = Boolean(p);
+                            const hasHighScore = p && p.highScore >= 80;
+
+                            return (
+                              <motion.button
+                                key={set.id}
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 0.2 }}
+                                onClick={() =>
+                                  router.push(
+                                    `/quiz/${set.id}?subjectId=${subject.id}&chapterId=${chapter.id}`
+                                  )
+                                }
+                                className={`relative flex flex-col items-start gap-1.5 p-3.5 rounded-xl border text-left transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] group ${
+                                  isCompleted
+                                    ? hasHighScore
+                                      ? "bg-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/40"
+                                      : "bg-[var(--accent)]/5 border-[var(--accent)]/20 hover:border-[var(--accent)]/40"
+                                    : "bg-white/[0.02] border-[var(--border)] hover:border-[var(--border-hover)] hover:bg-white/[0.04]"
+                                }`}
+                              >
+                                {/* Set label */}
+                                <div className="flex items-center justify-between w-full">
+                                  <span className="text-sm font-medium text-[var(--text)]">
+                                    {set.label}
                                   </span>
+                                  {isCompleted && (
+                                    <div
+                                      className={`flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
+                                        hasHighScore
+                                          ? "bg-emerald-500/15 text-emerald-400"
+                                          : "bg-[var(--accent)]/15 text-[var(--accent)]"
+                                      }`}
+                                    >
+                                      <Trophy size={9} />
+                                      {p?.highScore}%
+                                    </div>
+                                  )}
                                 </div>
-                              )}
-                            </button>
-                          );
-                        })}
+
+                                {/* Set meta */}
+                                <div className="flex items-center gap-2 text-[11px] text-[var(--text-muted)]">
+                                  {p ? (
+                                    <>
+                                      <span className="flex items-center gap-1">
+                                        <Play size={9} />
+                                        {p.attempts} {p.attempts === 1 ? "attempt" : "attempts"}
+                                      </span>
+                                      <span className="text-[var(--text-muted)]/40">|</span>
+                                      <span>{timeAgo(p.lastAttempt)}</span>
+                                    </>
+                                  ) : (
+                                    <span className="flex items-center gap-1">
+                                      <Play size={9} />
+                                      Start
+                                    </span>
+                                  )}
+                                </div>
+                              </motion.button>
+                            );
+                          })}
+                        </div>
                       </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </div>
-            </motion.div>
-          );
-        })}
-      </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </section>
     </div>
   );
 }

@@ -1,13 +1,12 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
   Trophy,
   Target,
-  CheckCircle2,
   Clock,
   Calendar,
   BarChart3,
@@ -17,8 +16,7 @@ import {
   Flame,
 } from "lucide-react";
 import type { Subject, AttemptSummary, SetProgress } from "@/types";
-import { getAllProgress } from "@/hooks/useProgress";
-import { getAllAttempts } from "@/hooks/useAttemptHistory";
+import { useQuizStore } from "@/lib/store";
 import StatCard from "./StatCard";
 
 interface ProfileClientProps {
@@ -43,17 +41,6 @@ interface SetAggregate {
   progress: SetProgress | null;
 }
 
-interface SubjectAggregate {
-  subjectId: string;
-  subjectName: string;
-  attempts: number;
-  totalCorrect: number;
-  totalQuestions: number;
-  avgPercentage: number;
-  bestPercentage: number;
-  setsAttempted: number;
-}
-
 function formatDuration(seconds: number): string {
   if (seconds < 60) return `${seconds}s`;
   const m = Math.floor(seconds / 60);
@@ -68,17 +55,6 @@ function formatDate(iso: string): string {
     month: "short",
     day: "numeric",
     year: "numeric",
-  });
-}
-
-function formatDateTime(iso: string): string {
-  if (!iso) return "--";
-  const d = new Date(iso);
-  return d.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
   });
 }
 
@@ -176,126 +152,53 @@ function ProgressBar({ percentage, color }: { percentage: number; color: string 
 
 export default function ProfileClient({ subjects }: ProfileClientProps) {
   const router = useRouter();
+  const attempts = useQuizStore((s) => s.attempts);
+  const progress = useQuizStore((s) => s.progress);
+  const subjectAnalytics = useQuizStore((s) => s.subjectAnalytics);
+  const globalAnalytics = useQuizStore((s) => s.globalAnalytics);
+  const isEmpty = useQuizStore((s) => s.isEmpty);
+  const setSubjects = useQuizStore((s) => s.setSubjects);
 
-  const { setMap, subjectMap } = useMemo(() => {
+  useEffect(() => {
+    setSubjects(subjects);
+  }, [subjects, setSubjects]);
+
+  const setMap = useMemo(() => {
     const sMap = new Map<string, SetInfo>();
-    const subjMap = new Map<string, Subject>();
     for (const subject of subjects) {
-      subjMap.set(subject.id, subject);
       for (const chapter of subject.chapters) {
         for (const set of chapter.sets) {
           sMap.set(set.id, { subject, chapter, set });
         }
       }
     }
-    return { setMap: sMap, subjectMap: subjMap };
+    return sMap;
   }, [subjects]);
-
-  const { attempts, progress, overall, subjectAggregates, setAggregates } = useMemo(() => {
-    const allAttempts = getAllAttempts();
-    const allProgress = getAllProgress();
-
-    const totalAttempts = allAttempts.length;
-    const totalCorrect = allAttempts.reduce((s, a) => s + a.score, 0);
-    const totalQuestions = allAttempts.reduce((s, a) => s + a.total, 0);
-    const overallAccuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
-    const uniqueSets = new Set(allAttempts.map((a) => a.setId)).size;
-    const totalDuration = allAttempts.reduce((s, a) => s + (a.duration || 0), 0);
-
-    const sortedAttempts = [...allAttempts]
-      .filter((a) => a.completedAt)
-      .sort((a, b) => new Date(a.completedAt).getTime() - new Date(b.completedAt).getTime());
-    let bestStreak = 0;
-    let currentStreak = 0;
-    for (const a of sortedAttempts) {
-      if (a.percentage >= 80) {
-        currentStreak++;
-        bestStreak = Math.max(bestStreak, currentStreak);
-      } else {
-        currentStreak = 0;
-      }
-    }
-
-    const overall = {
-      totalAttempts,
-      totalCorrect,
-      totalWrong: totalQuestions - totalCorrect,
-      totalQuestions,
-      overallAccuracy,
-      uniqueSets,
-      totalDuration,
-      bestStreak,
-    };
-
-    const subjectAttemptsById = new Map<string, AttemptSummary[]>();
-    for (const a of allAttempts) {
-      if (!subjectAttemptsById.has(a.subjectId)) subjectAttemptsById.set(a.subjectId, []);
-      subjectAttemptsById.get(a.subjectId)!.push(a);
-    }
-    const subjectAggregates: SubjectAggregate[] = [];
-    for (const [subjectId, sAttempts] of subjectAttemptsById) {
-      const subj = subjectMap.get(subjectId);
-      const totalCorrectSubj = sAttempts.reduce((s, a) => s + a.score, 0);
-      const totalQuestionsSubj = sAttempts.reduce((s, a) => s + a.total, 0);
-      subjectAggregates.push({
-        subjectId,
-        subjectName: subj?.name ?? subjectId,
-        attempts: sAttempts.length,
-        totalCorrect: totalCorrectSubj,
-        totalQuestions: totalQuestionsSubj,
-        avgPercentage: totalQuestionsSubj > 0 ? Math.round((totalCorrectSubj / totalQuestionsSubj) * 100) : 0,
-        bestPercentage: Math.max(...sAttempts.map((a) => a.percentage)),
-        setsAttempted: new Set(sAttempts.map((a) => a.setId)).size,
-      });
-    }
-    subjectAggregates.sort((a, b) => b.attempts - a.attempts);
-
-    const setAttemptsById = new Map<string, AttemptSummary[]>();
-    for (const a of allAttempts) {
-      if (!setAttemptsById.has(a.setId)) setAttemptsById.set(a.setId, []);
-      setAttemptsById.get(a.setId)!.push(a);
-    }
-    const setAggregates: SetAggregate[] = [];
-    for (const [setId, sAttempts] of setAttemptsById) {
-      const totalCorrectSet = sAttempts.reduce((s, a) => s + a.score, 0);
-      const totalQuestionsSet = sAttempts.reduce((s, a) => s + a.total, 0);
-      const bestPct = Math.max(...sAttempts.map((a) => a.percentage));
-      const avgPct = totalQuestionsSet > 0 ? Math.round((totalCorrectSet / totalQuestionsSet) * 100) : 0;
-      const lastDate = sAttempts
-        .filter((a) => a.completedAt)
-        .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())[0]?.completedAt ?? "";
-      setAggregates.push({
-        setId,
-        info: setMap.get(setId) ?? null,
-        attempts: sAttempts.length,
-        totalCorrect: totalCorrectSet,
-        totalQuestions: totalQuestionsSet,
-        bestPercentage: bestPct,
-        avgPercentage: avgPct,
-        lastAttemptDate: lastDate,
-        progress: allProgress[setId] ?? null,
-      });
-    }
-    setAggregates.sort((a, b) => new Date(b.lastAttemptDate).getTime() - new Date(a.lastAttemptDate).getTime());
-
-    return { attempts: allAttempts, progress: allProgress, overall, subjectAggregates, setAggregates };
-  }, [subjects, setMap, subjectMap]);
 
   const recentAttempts = useMemo(() => {
     return [...attempts]
       .filter((a) => a.completedAt)
       .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())
-      .slice(0, 15);
+      .slice(0, 10);
   }, [attempts]);
 
   const { weakChapters, strongChapters } = useMemo(() => {
-    const chapterMap = new Map<string, { name: string; subjectName: string; totalCorrect: number; totalQuestions: number; attempts: number }>();
+    const chapterMap = new Map<
+      string,
+      { name: string; subjectName: string; totalCorrect: number; totalQuestions: number; attempts: number }
+    >();
     for (const a of attempts) {
       const info = setMap.get(a.setId);
       if (!info) continue;
       const key = `${info.subject.id}-${info.chapter.id}`;
       if (!chapterMap.has(key)) {
-        chapterMap.set(key, { name: info.chapter.name, subjectName: info.subject.name, totalCorrect: 0, totalQuestions: 0, attempts: 0 });
+        chapterMap.set(key, {
+          name: info.chapter.name,
+          subjectName: info.subject.name,
+          totalCorrect: 0,
+          totalQuestions: 0,
+          attempts: 0,
+        });
       }
       const ch = chapterMap.get(key)!;
       ch.totalCorrect += a.score;
@@ -316,12 +219,47 @@ export default function ProfileClient({ subjects }: ProfileClientProps) {
     };
   }, [attempts, setMap]);
 
-  const isEmpty = overall.totalAttempts === 0;
+  const setAggregates = useMemo(() => {
+    const setAttemptsById = new Map<string, AttemptSummary[]>();
+    for (const a of attempts) {
+      if (!setAttemptsById.has(a.setId)) setAttemptsById.set(a.setId, []);
+      setAttemptsById.get(a.setId)!.push(a);
+    }
+    const sets: SetAggregate[] = [];
+    for (const [setId, sAttempts] of setAttemptsById) {
+      const totalCorrectSet = sAttempts.reduce((s, a) => s + a.score, 0);
+      const totalQuestionsSet = sAttempts.reduce((s, a) => s + a.total, 0);
+      const bestPct = Math.max(...sAttempts.map((a) => a.percentage));
+      const avgPct =
+        totalQuestionsSet > 0 ? Math.round((totalCorrectSet / totalQuestionsSet) * 100) : 0;
+      const lastDate =
+        sAttempts
+          .filter((a) => a.completedAt)
+          .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())[0]
+          ?.completedAt ?? "";
+      sets.push({
+        setId,
+        info: setMap.get(setId) ?? null,
+        attempts: sAttempts.length,
+        totalCorrect: totalCorrectSet,
+        totalQuestions: totalQuestionsSet,
+        bestPercentage: bestPct,
+        avgPercentage: avgPct,
+        lastAttemptDate: lastDate,
+        progress: progress[setId] ?? null,
+      });
+    }
+    sets.sort(
+      (a, b) => new Date(b.lastAttemptDate).getTime() - new Date(a.lastAttemptDate).getTime()
+    );
+    return sets;
+  }, [attempts, progress, setMap]);
+
+  const studyHours = Math.round(globalAnalytics.totalStudyMinutes / 60);
 
   return (
     <div className="min-h-[100dvh] px-4 sm:px-6 lg:px-8 py-8">
       <div className="max-w-6xl mx-auto">
-        
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -341,7 +279,6 @@ export default function ProfileClient({ subjects }: ProfileClientProps) {
           </div>
         </motion.div>
 
-        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -379,7 +316,7 @@ export default function ProfileClient({ subjects }: ProfileClientProps) {
             </div>
             <h2 className="text-2xl font-bold text-[var(--text)] mb-2">No attempts yet</h2>
             <p className="text-[var(--text-secondary)] mb-8 max-w-sm text-center">
-              Start practicing to see your progress, accuracy, and performance insights here.
+              Complete your first quiz to see your analytics.
             </p>
             <button
               onClick={() => router.push("/")}
@@ -391,7 +328,6 @@ export default function ProfileClient({ subjects }: ProfileClientProps) {
           </motion.div>
         ) : (
           <>
-            
             <motion.div
               variants={stagger}
               initial="hidden"
@@ -402,29 +338,29 @@ export default function ProfileClient({ subjects }: ProfileClientProps) {
                 <StatCard
                   icon={BookOpen}
                   iconColor="gold"
-                  value={String(overall.totalAttempts)}
+                  value={String(globalAnalytics.totalQuizzes)}
                   label="Total Quizzes"
-                  trend={overall.overallAccuracy}
-                  trendLabel="accuracy"
+                  trend={globalAnalytics.averageScore}
+                  trendLabel="avg score"
                 />
               </motion.div>
               <motion.div variants={fadeUp}>
                 <StatCard
                   icon={Target}
                   iconColor="blue"
-                  value={`${overall.overallAccuracy}%`}
+                  value={`${globalAnalytics.averageScore}%`}
                   label="Average Score"
-                  trend={overall.overallAccuracy >= 50 ? 12 : -8}
-                  trendLabel="vs avg"
+                  trend={globalAnalytics.recentScoreDelta}
+                  trendLabel="recent"
                 />
               </motion.div>
               <motion.div variants={fadeUp}>
                 <StatCard
                   icon={Clock}
                   iconColor="green"
-                  value={formatDuration(overall.totalDuration)}
+                  value={`${studyHours}h`}
                   label="Study Time"
-                  trend={5}
+                  trend={globalAnalytics.weeklyQuizzes}
                   trendLabel="this week"
                 />
               </motion.div>
@@ -432,16 +368,15 @@ export default function ProfileClient({ subjects }: ProfileClientProps) {
                 <StatCard
                   icon={Flame}
                   iconColor="purple"
-                  value={String(overall.bestStreak)}
+                  value={String(globalAnalytics.bestStreak)}
                   label="Best Streak"
-                  trend={overall.bestStreak}
-                  trendLabel="in a row"
+                  trend={globalAnalytics.currentStreak}
+                  trendLabel="current"
                 />
               </motion.div>
             </motion.div>
 
-            
-            {subjectAggregates.length > 0 && (
+            {subjectAnalytics.length > 0 && (
               <motion.section
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -452,7 +387,9 @@ export default function ProfileClient({ subjects }: ProfileClientProps) {
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[rgba(139,92,246,0.1)]">
                     <BookOpen size={16} className="text-[var(--purple)]" strokeWidth={2} />
                   </div>
-                  <h2 className="text-xl font-bold text-[var(--text)] tracking-tight">Subject Breakdown</h2>
+                  <h2 className="text-xl font-bold text-[var(--text)] tracking-tight">
+                    Subject Breakdown
+                  </h2>
                 </div>
                 <motion.div
                   variants={stagger}
@@ -460,48 +397,69 @@ export default function ProfileClient({ subjects }: ProfileClientProps) {
                   animate="show"
                   className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
                 >
-                  {subjectAggregates.map((subj) => {
-                    const ringColor = subj.avgPercentage >= 80
-                      ? "var(--success)"
-                      : subj.avgPercentage >= 50
-                        ? "var(--accent)"
-                        : "var(--danger)";
+                  {subjectAnalytics.map((sa) => {
+                    const ringColor =
+                      sa.averageScore >= 80
+                        ? "var(--success)"
+                        : sa.averageScore >= 50
+                          ? "var(--accent)"
+                          : "var(--danger)";
+                    const wrong = sa.totalQuestions - sa.totalCorrect;
                     return (
                       <motion.div
-                        key={subj.subjectId}
+                        key={sa.subjectId}
                         variants={fadeUp}
                         className="group relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--border-hover)] hover:bg-[var(--bg-card-hover)]"
                       >
                         <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-[var(--accent)] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex-1 min-w-0">
-                            <h3 className="text-base font-semibold text-[var(--text)] truncate">{subj.subjectName}</h3>
+                            <h3 className="text-base font-semibold text-[var(--text)] truncate">
+                              {sa.subjectName}
+                            </h3>
                             <p className="text-xs text-[var(--text-muted)] mt-0.5">
-                              {subj.setsAttempted} sets attempted
+                              {sa.chaptersCompleted}/{sa.totalChapters} chapters
                             </p>
                           </div>
                           <div className="relative shrink-0 ml-3">
-                            <ProgressRing percentage={subj.avgPercentage} size={48} strokeWidth={3.5} color={ringColor} />
+                            <ProgressRing
+                              percentage={sa.averageScore}
+                              size={48}
+                              strokeWidth={3.5}
+                              color={ringColor}
+                            />
                             <span className="absolute inset-0 flex items-center justify-center text-[11px] font-bold text-[var(--text)]">
-                              {subj.avgPercentage}
+                              {sa.averageScore}
                             </span>
                           </div>
                         </div>
                         <div className="grid grid-cols-3 gap-2 mb-3">
                           <div className="rounded-lg bg-[rgba(16,185,129,0.08)] px-2 py-1.5 text-center">
-                            <div className="text-xs font-bold text-[var(--success)]">{subj.totalCorrect}</div>
-                            <div className="text-[9px] uppercase tracking-wider text-[var(--text-muted)]">Correct</div>
+                            <div className="text-xs font-bold text-[var(--success)]">
+                              {sa.totalAttempts}
+                            </div>
+                            <div className="text-[9px] uppercase tracking-wider text-[var(--text-muted)]">
+                              Attempts
+                            </div>
                           </div>
                           <div className="rounded-lg bg-[rgba(239,68,68,0.08)] px-2 py-1.5 text-center">
-                            <div className="text-xs font-bold text-[var(--danger)]">{subj.totalQuestions - subj.totalCorrect}</div>
-                            <div className="text-[9px] uppercase tracking-wider text-[var(--text-muted)]">Wrong</div>
+                            <div className="text-xs font-bold text-[var(--danger)]">
+                              {wrong}
+                            </div>
+                            <div className="text-[9px] uppercase tracking-wider text-[var(--text-muted)]">
+                              Wrong
+                            </div>
                           </div>
                           <div className="rounded-lg bg-[rgba(245,197,24,0.08)] px-2 py-1.5 text-center">
-                            <div className="text-xs font-bold text-[var(--accent)]">{subj.bestPercentage}%</div>
-                            <div className="text-[9px] uppercase tracking-wider text-[var(--text-muted)]">Best</div>
+                            <div className="text-xs font-bold text-[var(--accent)]">
+                              {sa.bestScore}%
+                            </div>
+                            <div className="text-[9px] uppercase tracking-wider text-[var(--text-muted)]">
+                              Best
+                            </div>
                           </div>
                         </div>
-                        <ProgressBar percentage={subj.avgPercentage} color={ringColor} />
+                        <ProgressBar percentage={sa.averageScore} color={ringColor} />
                       </motion.div>
                     );
                   })}
@@ -509,7 +467,6 @@ export default function ProfileClient({ subjects }: ProfileClientProps) {
               </motion.section>
             )}
 
-            
             {(weakChapters.length > 0 || strongChapters.length > 0) && (
               <motion.section
                 initial={{ opacity: 0, y: 20 }}
@@ -521,7 +478,9 @@ export default function ProfileClient({ subjects }: ProfileClientProps) {
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[rgba(245,197,24,0.1)]">
                     <TrendingUp size={16} className="text-[var(--accent)]" strokeWidth={2} />
                   </div>
-                  <h2 className="text-xl font-bold text-[var(--text)] tracking-tight">Performance Insights</h2>
+                  <h2 className="text-xl font-bold text-[var(--text)] tracking-tight">
+                    Performance Insights
+                  </h2>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {strongChapters.length > 0 && (
@@ -530,14 +489,23 @@ export default function ProfileClient({ subjects }: ProfileClientProps) {
                         <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[rgba(16,185,129,0.1)]">
                           <Star size={14} className="text-[var(--success)]" strokeWidth={2} />
                         </div>
-                        <h3 className="text-sm font-semibold text-[var(--success)] uppercase tracking-wider">Strong Chapters</h3>
+                        <h3 className="text-sm font-semibold text-[var(--success)] uppercase tracking-wider">
+                          Strong Chapters
+                        </h3>
                       </div>
                       <div className="space-y-2.5">
                         {strongChapters.map((ch) => (
-                          <div key={ch.id} className="flex items-center justify-between rounded-xl bg-[rgba(16,185,129,0.05)] px-3.5 py-2.5">
+                          <div
+                            key={ch.id}
+                            className="flex items-center justify-between rounded-xl bg-[rgba(16,185,129,0.05)] px-3.5 py-2.5"
+                          >
                             <div className="min-w-0 flex-1">
-                              <div className="text-sm font-medium text-[var(--text)] truncate">{ch.name}</div>
-                              <div className="text-[11px] text-[var(--text-muted)]">{ch.subjectName}</div>
+                              <div className="text-sm font-medium text-[var(--text)] truncate">
+                                {ch.name}
+                              </div>
+                              <div className="text-[11px] text-[var(--text-muted)]">
+                                {ch.subjectName}
+                              </div>
                             </div>
                             <span className="ml-3 rounded-full bg-[rgba(16,185,129,0.15)] px-2.5 py-0.5 text-xs font-bold text-[var(--success)]">
                               {ch.avgPct}%
@@ -553,14 +521,23 @@ export default function ProfileClient({ subjects }: ProfileClientProps) {
                         <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[rgba(239,68,68,0.1)]">
                           <Target size={14} className="text-[var(--danger)]" strokeWidth={2} />
                         </div>
-                        <h3 className="text-sm font-semibold text-[var(--danger)] uppercase tracking-wider">Needs Improvement</h3>
+                        <h3 className="text-sm font-semibold text-[var(--danger)] uppercase tracking-wider">
+                          Needs Improvement
+                        </h3>
                       </div>
                       <div className="space-y-2.5">
                         {weakChapters.map((ch) => (
-                          <div key={ch.id} className="flex items-center justify-between rounded-xl bg-[rgba(239,68,68,0.05)] px-3.5 py-2.5">
+                          <div
+                            key={ch.id}
+                            className="flex items-center justify-between rounded-xl bg-[rgba(239,68,68,0.05)] px-3.5 py-2.5"
+                          >
                             <div className="min-w-0 flex-1">
-                              <div className="text-sm font-medium text-[var(--text)] truncate">{ch.name}</div>
-                              <div className="text-[11px] text-[var(--text-muted)]">{ch.subjectName}</div>
+                              <div className="text-sm font-medium text-[var(--text)] truncate">
+                                {ch.name}
+                              </div>
+                              <div className="text-[11px] text-[var(--text-muted)]">
+                                {ch.subjectName}
+                              </div>
                             </div>
                             <span className="ml-3 rounded-full bg-[rgba(239,68,68,0.15)] px-2.5 py-0.5 text-xs font-bold text-[var(--danger)]">
                               {ch.avgPct}%
@@ -574,7 +551,6 @@ export default function ProfileClient({ subjects }: ProfileClientProps) {
               </motion.section>
             )}
 
-            
             {recentAttempts.length > 0 && (
               <motion.section
                 initial={{ opacity: 0, y: 20 }}
@@ -586,10 +562,11 @@ export default function ProfileClient({ subjects }: ProfileClientProps) {
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[rgba(59,130,246,0.1)]">
                     <Clock size={16} className="text-[var(--blue)]" strokeWidth={2} />
                   </div>
-                  <h2 className="text-xl font-bold text-[var(--text)] tracking-tight">Recent Attempts</h2>
+                  <h2 className="text-xl font-bold text-[var(--text)] tracking-tight">
+                    Recent Attempts
+                  </h2>
                 </div>
                 <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] overflow-hidden">
-                  
                   <div className="hidden sm:grid sm:grid-cols-[1fr_100px_80px_80px_60px] gap-3 px-5 py-3 border-b border-[var(--border)] text-[11px] uppercase tracking-wider text-[var(--text-muted)] font-semibold">
                     <span>Quiz</span>
                     <span>Date</span>
@@ -634,7 +611,9 @@ export default function ProfileClient({ subjects }: ProfileClientProps) {
                               {formatDuration(attempt.duration)}
                             </div>
                             <div className="flex items-center gap-2">
-                              <span className={`inline-flex items-center justify-center rounded-full px-2 py-0.5 text-xs font-bold ${scoreColor(pct)} ${scoreBg(pct)}`}>
+                              <span
+                                className={`inline-flex items-center justify-center rounded-full px-2 py-0.5 text-xs font-bold ${scoreColor(pct)} ${scoreBg(pct)}`}
+                              >
                                 {pct}%
                               </span>
                               <span className="text-[11px] text-[var(--text-muted)] hidden sm:inline">
@@ -655,7 +634,6 @@ export default function ProfileClient({ subjects }: ProfileClientProps) {
               </motion.section>
             )}
 
-            
             {setAggregates.length > 0 && (
               <motion.section
                 initial={{ opacity: 0, y: 20 }}
@@ -667,20 +645,28 @@ export default function ProfileClient({ subjects }: ProfileClientProps) {
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[rgba(20,184,166,0.1)]">
                     <BarChart3 size={16} className="text-[var(--teal)]" strokeWidth={2} />
                   </div>
-                  <h2 className="text-xl font-bold text-[var(--text)] tracking-tight">Set Performance</h2>
+                  <h2 className="text-xl font-bold text-[var(--text)] tracking-tight">
+                    Set Performance
+                  </h2>
                 </div>
-                <motion.div variants={stagger} initial="hidden" animate="show" className="space-y-3">
+                <motion.div
+                  variants={stagger}
+                  initial="hidden"
+                  animate="show"
+                  className="space-y-3"
+                >
                   {setAggregates.map((sa) => {
                     const info = sa.info;
                     const title = info
                       ? `${info.subject.name} / ${info.chapter.name.replace("Chapter ", "Ch. ")} / ${info.set.label}`
                       : sa.setId;
                     const wrong = sa.totalQuestions - sa.totalCorrect;
-                    const barColor = sa.avgPercentage >= 80
-                      ? "var(--success)"
-                      : sa.avgPercentage >= 50
-                        ? "var(--accent)"
-                        : "var(--danger)";
+                    const barColor =
+                      sa.avgPercentage >= 80
+                        ? "var(--success)"
+                        : sa.avgPercentage >= 50
+                          ? "var(--accent)"
+                          : "var(--danger)";
                     return (
                       <motion.div
                         key={sa.setId}
@@ -689,13 +675,17 @@ export default function ProfileClient({ subjects }: ProfileClientProps) {
                       >
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
                           <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium text-[var(--text)] truncate">{title}</div>
+                            <div className="text-sm font-medium text-[var(--text)] truncate">
+                              {title}
+                            </div>
                             <div className="flex items-center gap-3 mt-1 text-[11px] text-[var(--text-muted)]">
                               <span className="flex items-center gap-1">
                                 <Calendar size={11} />
                                 {formatDate(sa.lastAttemptDate)}
                               </span>
-                              <span>{sa.attempts} attempt{sa.attempts !== 1 ? "s" : ""}</span>
+                              <span>
+                                {sa.attempts} attempt{sa.attempts !== 1 ? "s" : ""}
+                              </span>
                               {sa.progress && (
                                 <span className="flex items-center gap-1 text-[var(--accent)]">
                                   <Trophy size={11} />
@@ -706,22 +696,36 @@ export default function ProfileClient({ subjects }: ProfileClientProps) {
                           </div>
                           <div className="flex items-center gap-3 sm:gap-5 shrink-0">
                             <div className="text-center">
-                              <div className="text-sm font-bold text-[var(--success)]">{sa.totalCorrect}</div>
-                              <div className="text-[9px] uppercase tracking-wider text-[var(--text-muted)]">Correct</div>
+                              <div className="text-sm font-bold text-[var(--success)]">
+                                {sa.totalCorrect}
+                              </div>
+                              <div className="text-[9px] uppercase tracking-wider text-[var(--text-muted)]">
+                                Correct
+                              </div>
                             </div>
                             <div className="text-center">
-                              <div className="text-sm font-bold text-[var(--danger)]">{wrong}</div>
-                              <div className="text-[9px] uppercase tracking-wider text-[var(--text-muted)]">Wrong</div>
+                              <div className="text-sm font-bold text-[var(--danger)]">
+                                {wrong}
+                              </div>
+                              <div className="text-[9px] uppercase tracking-wider text-[var(--text-muted)]">
+                                Wrong
+                              </div>
                             </div>
                             <div className="text-center">
-                              <div className="text-sm font-bold text-[var(--accent)]">{sa.avgPercentage}%</div>
-                              <div className="text-[9px] uppercase tracking-wider text-[var(--text-muted)]">Avg</div>
+                              <div className="text-sm font-bold text-[var(--accent)]">
+                                {sa.avgPercentage}%
+                              </div>
+                              <div className="text-[9px] uppercase tracking-wider text-[var(--text-muted)]">
+                                Avg
+                              </div>
                             </div>
                             {sa.info && (
                               <button
                                 onClick={() => {
                                   const i = sa.info!;
-                                  router.push(`/quiz/${sa.setId}?subjectId=${i.subject.id}&chapterId=${i.chapter.id}`);
+                                  router.push(
+                                    `/quiz/${sa.setId}?subjectId=${i.subject.id}&chapterId=${i.chapter.id}`
+                                  );
                                 }}
                                 className="flex h-8 w-8 items-center justify-center rounded-lg bg-[rgba(245,197,24,0.1)] text-[var(--accent)] hover:bg-[rgba(245,197,24,0.2)] transition-colors duration-200 active:scale-[0.96]"
                                 title="Retake set"

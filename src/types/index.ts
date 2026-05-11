@@ -72,3 +72,52 @@ export type SetStats = {
   totalAnswered: number;
   lastAttemptDate: string;
 };
+
+export type StudySession = {
+  id: string;
+  startedAt: string;
+  endedAt: string | null;
+  activeDuration: number;
+  subjectId: string | null;
+  chapterId: string | null;
+};
+
+export type DailyLog = {
+  date: string;
+  totalAttempts: number;
+  totalCorrect: number;
+  totalQuestions: number;
+  activeMinutes: number;
+  subjects: string[];
+};
+
+export type SubjectAnalytics = {
+  subjectId: string;
+  subjectName: string;
+  totalAttempts: number;
+  totalCorrect: number;
+  totalQuestions: number;
+  averageScore: number;
+  bestScore: number;
+  lastAttemptDate: string;
+  chaptersCompleted: number;
+  totalChapters: number;
+  totalStudyMinutes: number;
+};
+
+export type GlobalAnalytics = {
+  totalAttempts: number;
+  totalQuizzes: number;
+  totalCorrect: number;
+  totalQuestions: number;
+  averageScore: number;
+  bestScore: number;
+  totalStudyMinutes: number;
+  weeklyQuizzes: number;
+  currentStreak: number;
+  bestStreak: number;
+  strongestSubjectId: string | null;
+  weakestSubjectId: string | null;
+  recentScoreDelta: number;
+  lastAttemptDate: string;
+};

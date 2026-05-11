@@ -11,16 +11,10 @@ import {
   ArrowLeft,
   History,
   CheckCircle2,
-  Clock,
-  Trophy,
   Target,
 } from "lucide-react";
 import type { MCQSet, QuestionAttempt } from "@/types";
-import { useProgress } from "@/hooks/useProgress";
-import {
-  createAttempt as createAttemptFn,
-  finalizeAttempt,
-} from "@/hooks/useAttemptHistory";
+import { useQuizStore } from "@/lib/store";
 import KatexRenderer from "./KatexRenderer";
 import ExplanationCard from "./ExplanationCard";
 
@@ -72,7 +66,7 @@ function ScoreLabel({ score, total }: { score: number; total: number }) {
 
 export default function Quiz({ set, subjectId, chapterId, onBack }: QuizProps) {
   const router = useRouter();
-  const { saveProgress } = useProgress();
+  const { createAttempt, finalizeAttempt } = useQuizStore();
   const [questions, setQuestions] = useState<ShuffledQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -84,11 +78,11 @@ export default function Quiz({ set, subjectId, chapterId, onBack }: QuizProps) {
   const questionAttempts = useRef<QuestionAttempt[]>([]);
 
   useEffect(() => {
-    const id = createAttemptFn(set.id, subjectId, chapterId);
+    const id = createAttempt(set.id, subjectId, chapterId);
     setAttemptId(id);
     setQuestions(buildShuffledQuestions(set));
     setIsShuffled(true);
-  }, [set, subjectId, chapterId]);
+  }, [set, subjectId, chapterId, createAttempt]);
 
   const current = questions[currentIndex];
   const total = questions.length;
@@ -126,17 +120,16 @@ export default function Quiz({ set, subjectId, chapterId, onBack }: QuizProps) {
       setSelectedIndex(null);
       setIsAnswered(false);
     } else {
-      saveProgress(set.id, score, total);
       if (attemptId) {
-        finalizeAttempt(attemptId, questionAttempts.current);
+        finalizeAttempt(attemptId, questionAttempts.current, subjectId, chapterId);
       }
       setIsComplete(true);
     }
-  }, [currentIndex, total, score, set.id, current, selectedIndex, attemptId]);
+  }, [currentIndex, total, score, set.id, current, selectedIndex, attemptId, finalizeAttempt, subjectId, chapterId, set.questions]);
 
   const handleRetake = useCallback(() => {
     questionAttempts.current = [];
-    const id = createAttemptFn(set.id, subjectId, chapterId);
+    const id = createAttempt(set.id, subjectId, chapterId);
     setAttemptId(id);
     setQuestions(buildShuffledQuestions(set));
     setCurrentIndex(0);
@@ -144,7 +137,7 @@ export default function Quiz({ set, subjectId, chapterId, onBack }: QuizProps) {
     setIsAnswered(false);
     setScore(0);
     setIsComplete(false);
-  }, [set, subjectId, chapterId]);
+  }, [set, subjectId, chapterId, createAttempt]);
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {

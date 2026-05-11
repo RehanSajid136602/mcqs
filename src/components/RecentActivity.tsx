@@ -1,11 +1,10 @@
 "use client";
 
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { Atom, Calculator, BookOpen, Cpu, Code2, ArrowRight } from "lucide-react";
 import { type LucideIcon } from "lucide-react";
-import { useRecentActivity, formatTimeAgo } from "@/hooks/useRecentActivity";
-
-type SubjectColor = "gold" | "blue" | "pink" | "purple" | "teal";
+import { useQuizStore } from "@/lib/store";
 
 const SUBJECT_ICONS: Record<string, LucideIcon> = {
   physics: Atom,
@@ -50,8 +49,38 @@ const item = {
   show: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as const } },
 };
 
+function formatTimeAgo(iso: string): string {
+  const now = Date.now();
+  const then = new Date(iso).getTime();
+  const diffMs = now - then;
+
+  if (diffMs < 0) return "just now";
+
+  const minutes = Math.floor(diffMs / 60000);
+  const hours = Math.floor(diffMs / 3600000);
+  const days = Math.floor(diffMs / 86400000);
+
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  if (days === 1) return "Yesterday";
+  if (days < 7) return `${days}d ago`;
+  return new Date(iso).toLocaleDateString();
+}
+
 export default function RecentActivity() {
-  const activities = useRecentActivity(4);
+  const attempts = useQuizStore((s) => s.attempts);
+
+  const activities = useMemo(() => {
+    return attempts
+      .filter((a) => a.completedAt && a.total > 0)
+      .sort(
+        (a, b) =>
+          new Date(b.completedAt).getTime() -
+          new Date(a.completedAt).getTime()
+      )
+      .slice(0, 4);
+  }, [attempts]);
 
   return (
     <div className="rounded-[20px] border border-[var(--border)] bg-[var(--bg-card)] p-6">
@@ -71,9 +100,8 @@ export default function RecentActivity() {
           <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[rgba(255,255,255,0.04)]">
             <BookOpen size={20} className="text-[var(--text-muted)]" strokeWidth={1.5} />
           </div>
-          <p className="text-sm text-[var(--text-muted)]">No activity yet</p>
-          <p className="mt-1 text-xs text-[var(--text-muted)] opacity-60">
-            Complete a quiz to see your history here
+          <p className="text-sm text-[var(--text-muted)]">
+            No activity yet. Complete your first quiz!
           </p>
         </div>
       ) : (
@@ -83,18 +111,18 @@ export default function RecentActivity() {
           initial="hidden"
           animate="show"
         >
-          {activities.map((activity, idx) => {
-            const Icon = SUBJECT_ICONS[activity.subjectId] ?? BookOpen;
-            const colors = SUBJECT_COLORS[activity.subjectId] ?? {
+          {activities.map((attempt) => {
+            const Icon = SUBJECT_ICONS[attempt.subjectId] ?? BookOpen;
+            const colors = SUBJECT_COLORS[attempt.subjectId] ?? {
               bg: "rgba(255,255,255,0.06)",
               text: "var(--text-secondary)",
             };
-            const label = SUBJECT_LABELS[activity.subjectId] ?? activity.subjectId;
-            const isGood = activity.percentage >= 70;
+            const label = SUBJECT_LABELS[attempt.subjectId] ?? attempt.subjectId;
+            const isGood = attempt.percentage >= 70;
 
             return (
               <motion.div
-                key={`${activity.quizId}-${idx}`}
+                key={attempt.id}
                 variants={item}
                 className="flex items-center gap-3.5 py-3.5 first:pt-0 last:pb-0"
               >
@@ -107,11 +135,11 @@ export default function RecentActivity() {
 
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold">
-                    {label} &mdash; {activity.chapterName} Set {activity.setNumber}
+                    {label} &mdash; {attempt.chapterId} Set {attempt.setId}
                   </p>
                   <p className="text-[13px] text-[var(--text-muted)]">
-                    {activity.totalQuestions} questions &middot;{" "}
-                    {formatTimeAgo(activity.timestamp)}
+                    {attempt.total} questions &middot;{" "}
+                    {formatTimeAgo(attempt.completedAt)}
                   </p>
                 </div>
 
@@ -120,7 +148,7 @@ export default function RecentActivity() {
                     isGood ? "text-[var(--success)]" : "text-[var(--danger)]"
                   }`}
                 >
-                  {activity.percentage}%
+                  {attempt.percentage}%
                 </span>
               </motion.div>
             );

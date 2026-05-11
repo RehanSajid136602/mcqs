@@ -14,15 +14,17 @@ import {
   TrendingUp,
   Clock,
 } from "lucide-react";
-import type { Subject, AttemptSummary } from "@/types";
-import { useProgress } from "@/hooks/useProgress";
-import { getAllAttempts } from "@/hooks/useAttemptHistory";
+import type { Subject } from "@/types";
+import { useQuizStore } from "@/lib/store";
 
 interface SubjectClientProps {
   subject: Subject;
 }
 
-const SUBJECT_ACCENTS: Record<string, { gradient: string; glow: string; text: string; border: string }> = {
+const SUBJECT_ACCENTS: Record<
+  string,
+  { gradient: string; glow: string; text: string; border: string }
+> = {
   physics: {
     gradient: "from-amber-500/20 via-yellow-500/10 to-transparent",
     glow: "rgba(245, 197, 24, 0.12)",
@@ -55,13 +57,6 @@ function getAccent(subjectId: string) {
   return SUBJECT_ACCENTS[subjectId] ?? DEFAULT_ACCENT;
 }
 
-function formatDuration(seconds: number): string {
-  if (seconds < 60) return `${seconds}s`;
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return s > 0 ? `${m}m ${s}s` : `${m}m`;
-}
-
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
@@ -76,9 +71,15 @@ function timeAgo(dateStr: string): string {
 export default function SubjectClient({ subject }: SubjectClientProps) {
   const router = useRouter();
   const [expandedChapter, setExpandedChapter] = useState<string | null>(null);
-  const { progress } = useProgress();
-  const attempts = getAllAttempts();
+  const attempts = useQuizStore((s) => s.attempts);
+  const progress = useQuizStore((s) => s.progress);
+  const subjectAnalytics = useQuizStore((s) => s.subjectAnalytics);
   const accent = getAccent(subject.id);
+
+  const analytics = useMemo(
+    () => subjectAnalytics.find((a) => a.subjectId === subject.id),
+    [subjectAnalytics, subject.id]
+  );
 
   const subjectAttempts = useMemo(
     () =>
@@ -133,23 +134,27 @@ export default function SubjectClient({ subject }: SubjectClientProps) {
     return { done, total: sets.length, best, avgScore };
   };
 
+  const hasNoAttempts = !analytics || analytics.totalAttempts === 0;
+
   const stats = [
-    { label: "Chapters", value: subject.chapters.length, icon: BookOpen },
+    { label: "Chapters", value: analytics?.totalChapters ?? subject.chapters.length, icon: BookOpen },
     { label: "Quiz Sets", value: totalSets, icon: Play },
     { label: "Completion", value: `${overallCompletion}%`, icon: TrendingUp },
-    { label: "Best Score", value: bestScore > 0 ? `${bestScore}%` : "--", icon: Trophy },
+    {
+      label: "Best Score",
+      value: analytics?.bestScore ? `${analytics.bestScore}%` : "--",
+      icon: Trophy,
+    },
   ];
 
   return (
     <div className="min-h-[100dvh] px-4 sm:px-6 lg:px-8 py-6 sm:py-10 max-w-4xl mx-auto">
-      {/* ── Hero Section ── */}
       <motion.div
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
         className="relative mb-10"
       >
-        {/* Gradient accent orb */}
         <div
           className="absolute -top-20 -left-20 w-[400px] h-[400px] rounded-full pointer-events-none opacity-60"
           style={{
@@ -157,7 +162,6 @@ export default function SubjectClient({ subject }: SubjectClientProps) {
           }}
         />
 
-        {/* Back button */}
         <button
           onClick={() => router.push("/")}
           className="relative z-10 flex items-center gap-2 text-[var(--text-muted)] hover:text-[var(--text)] transition-colors duration-300 mb-8 group"
@@ -169,12 +173,10 @@ export default function SubjectClient({ subject }: SubjectClientProps) {
           <span className="text-sm font-medium tracking-wide">Back to Subjects</span>
         </button>
 
-        {/* Subject name */}
         <h1 className="relative z-10 font-display text-4xl sm:text-[40px] font-bold tracking-tight text-[var(--text)] leading-none mb-6">
           {subject.name}
         </h1>
 
-        {/* Stats row */}
         <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-3">
           {stats.map((stat, i) => {
             const Icon = stat.icon;
@@ -183,7 +185,11 @@ export default function SubjectClient({ subject }: SubjectClientProps) {
                 key={stat.label}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 + i * 0.06, duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+                transition={{
+                  delay: 0.1 + i * 0.06,
+                  duration: 0.4,
+                  ease: [0.32, 0.72, 0, 1],
+                }}
                 className="flex items-center gap-3 bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl px-4 py-3 hover:border-[var(--border-hover)] transition-colors duration-300"
               >
                 <Icon size={18} className={accent.text} strokeWidth={1.5} />
@@ -201,49 +207,82 @@ export default function SubjectClient({ subject }: SubjectClientProps) {
         </div>
       </motion.div>
 
-      {/* ── Recent Activity ── */}
-      {subjectAttempts.length > 0 && (
-        <motion.section
+      {hasNoAttempts ? (
+        <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25, duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
-          className="mb-10"
+          transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+          className="flex flex-col items-center justify-center py-16"
         >
-          <h2 className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-[0.15em] mb-3 flex items-center gap-2">
-            <Clock size={14} strokeWidth={1.5} />
-            Recent Activity
-          </h2>
-          <div className="flex gap-2.5 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-thin">
-            {subjectAttempts.slice(0, 12).map((a, i) => {
-              const pct = a.percentage;
-              const colorClass =
-                pct >= 80
-                  ? "text-emerald-400 border-emerald-500/25 bg-emerald-500/5"
-                  : pct >= 50
-                    ? "text-amber-400 border-amber-500/25 bg-amber-500/5"
-                    : "text-rose-400 border-rose-500/25 bg-rose-500/5";
-
-              return (
-                <motion.button
-                  key={a.id}
-                  initial={{ opacity: 0, scale: 0.92 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.3 + i * 0.04 }}
-                  onClick={() => router.push(`/review/${a.id}`)}
-                  className={`shrink-0 flex flex-col items-start gap-1 px-3.5 py-2.5 rounded-xl border text-left transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] ${colorClass}`}
-                >
-                  <div className="text-base font-bold leading-none">{pct}%</div>
-                  <div className="text-[10px] text-[var(--text-muted)] leading-none">
-                    {timeAgo(a.completedAt)}
-                  </div>
-                </motion.button>
-              );
-            })}
+          <div className="relative mb-4">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--bg-card)] border border-[var(--border)]">
+              <TrendingUp size={24} className="text-[var(--text-muted)]" />
+            </div>
           </div>
-        </motion.section>
+          <h2 className="text-xl font-bold text-[var(--text)] mb-1">No attempts yet</h2>
+          <p className="text-[var(--text-secondary)] mb-6 max-w-xs text-center text-sm">
+            No attempts yet. Start your first quiz!
+          </p>
+          <button
+            onClick={() => {
+              if (subject.chapters.length > 0 && subject.chapters[0].sets.length > 0) {
+                const firstSet = subject.chapters[0].sets[0];
+                router.push(
+                  `/quiz/${firstSet.id}?subjectId=${subject.id}&chapterId=${subject.chapters[0].id}`
+                );
+              }
+            }}
+            className="group flex items-center gap-2 rounded-full bg-[var(--accent)] px-5 py-2.5 font-semibold text-[var(--bg)] transition-all duration-300 hover:shadow-[0_0_30px_rgba(245,197,24,0.3)] active:scale-[0.98]"
+          >
+            Start First Quiz
+            <ArrowLeft size={14} className="rotate-180 transition-transform duration-300 group-hover:translate-x-0.5" />
+          </button>
+        </motion.div>
+      ) : (
+        <>
+          {subjectAttempts.length > 0 && (
+            <motion.section
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25, duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
+              className="mb-10"
+            >
+              <h2 className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-[0.15em] mb-3 flex items-center gap-2">
+                <Clock size={14} strokeWidth={1.5} />
+                Recent Activity
+              </h2>
+              <div className="flex gap-2.5 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-thin">
+                {subjectAttempts.slice(0, 12).map((a, i) => {
+                  const pct = a.percentage;
+                  const colorClass =
+                    pct >= 80
+                      ? "text-emerald-400 border-emerald-500/25 bg-emerald-500/5"
+                      : pct >= 50
+                        ? "text-amber-400 border-amber-500/25 bg-amber-500/5"
+                        : "text-rose-400 border-rose-500/25 bg-rose-500/5";
+
+                  return (
+                    <motion.button
+                      key={a.id}
+                      initial={{ opacity: 0, scale: 0.92 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.3 + i * 0.04 }}
+                      onClick={() => router.push(`/review/${a.id}`)}
+                      className={`shrink-0 flex flex-col items-start gap-1 px-3.5 py-2.5 rounded-xl border text-left transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] ${colorClass}`}
+                    >
+                      <div className="text-base font-bold leading-none">{pct}%</div>
+                      <div className="text-[10px] text-[var(--text-muted)] leading-none">
+                        {timeAgo(a.completedAt)}
+                      </div>
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </motion.section>
+          )}
+        </>
       )}
 
-      {/* ── Chapters ── */}
       <section>
         <h2 className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-[0.15em] mb-4 flex items-center gap-2">
           <BookOpen size={14} strokeWidth={1.5} />
@@ -252,29 +291,37 @@ export default function SubjectClient({ subject }: SubjectClientProps) {
 
         <div className="space-y-3">
           {subject.chapters.map((chapter, idx) => {
-            const stats = getChapterStats(chapter.id);
+            const chapterStats = getChapterStats(chapter.id);
             const isExpanded = expandedChapter === chapter.id;
-            const chapterNum = chapter.id.match(/chapter-(\d+)/)?.[1] ?? String(idx + 1);
-            const completionPct = stats.total > 0 ? Math.round((stats.done / stats.total) * 100) : 0;
+            const chapterNum =
+              chapter.id.match(/chapter-(\d+)/)?.[1] ?? String(idx + 1);
+            const completionPct =
+              chapterStats.total > 0
+                ? Math.round((chapterStats.done / chapterStats.total) * 100)
+                : 0;
 
             return (
               <motion.div
                 key={chapter.id}
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 + idx * 0.05, duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+                transition={{
+                  delay: 0.3 + idx * 0.05,
+                  duration: 0.4,
+                  ease: [0.32, 0.72, 0, 1],
+                }}
                 className={`bg-[var(--bg-card)] rounded-2xl border transition-colors duration-300 overflow-hidden ${
                   isExpanded
                     ? "border-[var(--border-hover)]"
                     : "border-[var(--border)] hover:border-[var(--border-hover)]"
                 }`}
               >
-                {/* Chapter header */}
                 <button
-                  onClick={() => setExpandedChapter(isExpanded ? null : chapter.id)}
+                  onClick={() =>
+                    setExpandedChapter(isExpanded ? null : chapter.id)
+                  }
                   className="w-full flex items-center gap-4 p-4 sm:p-5 text-left group"
                 >
-                  {/* Chapter number badge */}
                   <div
                     className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold transition-colors duration-300 ${
                       completionPct === 100
@@ -289,18 +336,20 @@ export default function SubjectClient({ subject }: SubjectClientProps) {
                     )}
                   </div>
 
-                  {/* Chapter info */}
                   <div className="flex-1 min-w-0">
                     <div className="text-[var(--text)] font-medium text-sm sm:text-base leading-snug truncate">
                       {chapter.name}
                     </div>
                     <div className="flex items-center gap-3 mt-1.5">
-                      {/* Progress bar */}
                       <div className="flex-1 max-w-[120px] h-1.5 bg-white/5 rounded-full overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${completionPct}%` }}
-                          transition={{ duration: 0.6, delay: 0.4 + idx * 0.05, ease: [0.32, 0.72, 0, 1] }}
+                          transition={{
+                            duration: 0.6,
+                            delay: 0.4 + idx * 0.05,
+                            ease: [0.32, 0.72, 0, 1],
+                          }}
                           className={`h-full rounded-full ${
                             completionPct === 100
                               ? "bg-emerald-400"
@@ -311,18 +360,17 @@ export default function SubjectClient({ subject }: SubjectClientProps) {
                         />
                       </div>
                       <span className="text-[11px] text-[var(--text-muted)] tabular-nums">
-                        {stats.done}/{stats.total} sets
+                        {chapterStats.done}/{chapterStats.total} sets
                       </span>
-                      {stats.best > 0 && (
+                      {chapterStats.best > 0 && (
                         <span className="flex items-center gap-1 text-[11px] text-[var(--text-muted)]">
                           <Star size={10} className={accent.text} />
-                          {stats.best}%
+                          {chapterStats.best}%
                         </span>
                       )}
                     </div>
                   </div>
 
-                  {/* Expand chevron */}
                   <ChevronRight
                     size={18}
                     className={`text-[var(--text-muted)] transition-transform duration-300 ${
@@ -331,7 +379,6 @@ export default function SubjectClient({ subject }: SubjectClientProps) {
                   />
                 </button>
 
-                {/* Expanded sets */}
                 <AnimatePresence>
                   {isExpanded && (
                     <motion.div
@@ -367,7 +414,6 @@ export default function SubjectClient({ subject }: SubjectClientProps) {
                                     : "bg-white/[0.02] border-[var(--border)] hover:border-[var(--border-hover)] hover:bg-white/[0.04]"
                                 }`}
                               >
-                                {/* Set label */}
                                 <div className="flex items-center justify-between w-full">
                                   <span className="text-sm font-medium text-[var(--text)]">
                                     {set.label}
@@ -386,13 +432,13 @@ export default function SubjectClient({ subject }: SubjectClientProps) {
                                   )}
                                 </div>
 
-                                {/* Set meta */}
                                 <div className="flex items-center gap-2 text-[11px] text-[var(--text-muted)]">
                                   {p ? (
                                     <>
                                       <span className="flex items-center gap-1">
                                         <Play size={9} />
-                                        {p.attempts} {p.attempts === 1 ? "attempt" : "attempts"}
+                                        {p.attempts}{" "}
+                                        {p.attempts === 1 ? "attempt" : "attempts"}
                                       </span>
                                       <span className="text-[var(--text-muted)]/40">|</span>
                                       <span>{timeAgo(p.lastAttempt)}</span>

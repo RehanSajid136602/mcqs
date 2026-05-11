@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Trophy, CheckCircle, Clock, Flame } from "lucide-react";
-import type { Subject, AttemptSummary } from "@/types";
+import type { Subject } from "@/types";
+import { useQuizStore } from "@/lib/store";
 import DashboardHeader from "./DashboardHeader";
 import StatCard from "./StatCard";
 import SubjectBentoGrid from "./SubjectBentoGrid";
@@ -14,65 +15,6 @@ interface SubjectStats {
   avgPct: number;
   totalAttempts: number;
   bestPct: number;
-}
-
-function computeSubjectStats(subjectId: string): SubjectStats {
-  if (typeof window === "undefined") return { avgPct: 0, totalAttempts: 0, bestPct: 0 };
-  try {
-    const raw = localStorage.getItem("mcq_attempts");
-    if (!raw) return { avgPct: 0, totalAttempts: 0, bestPct: 0 };
-    const attempts: AttemptSummary[] = JSON.parse(raw);
-    const subjectAttempts = attempts.filter((a) => a.subjectId === subjectId && a.total > 0);
-    if (subjectAttempts.length === 0) return { avgPct: 0, totalAttempts: 0, bestPct: 0 };
-    const totalPct = subjectAttempts.reduce((s, a) => s + a.percentage, 0);
-    const bestPct = Math.max(...subjectAttempts.map((a) => a.percentage));
-    return {
-      avgPct: Math.round(totalPct / subjectAttempts.length),
-      totalAttempts: subjectAttempts.length,
-      bestPct,
-    };
-  } catch {
-    return { avgPct: 0, totalAttempts: 0, bestPct: 0 };
-  }
-}
-
-function computeTotalQuizzes(): number {
-  if (typeof window === "undefined") return 0;
-  try {
-    const raw = localStorage.getItem("mcq_attempts");
-    if (!raw) return 0;
-    const attempts: AttemptSummary[] = JSON.parse(raw);
-    return attempts.filter((a) => a.total > 0).length;
-  } catch {
-    return 0;
-  }
-}
-
-function computeTotalStudyTime(): number {
-  if (typeof window === "undefined") return 0;
-  try {
-    const raw = localStorage.getItem("mcq_attempts");
-    if (!raw) return 0;
-    const attempts: AttemptSummary[] = JSON.parse(raw);
-    const totalMinutes = attempts.reduce((s, a) => s + (a.duration || 0), 0);
-    return Math.round(totalMinutes / 60);
-  } catch {
-    return 0;
-  }
-}
-
-function computeGlobalAvg(): number {
-  if (typeof window === "undefined") return 0;
-  try {
-    const raw = localStorage.getItem("mcq_attempts");
-    if (!raw) return 0;
-    const attempts: AttemptSummary[] = JSON.parse(raw);
-    const completed = attempts.filter((a) => a.total > 0);
-    if (completed.length === 0) return 0;
-    return Math.round(completed.reduce((s, a) => s + a.percentage, 0) / completed.length);
-  } catch {
-    return 0;
-  }
 }
 
 const SUBJECT_COLOR_MAP: Record<string, "gold" | "blue" | "pink" | "purple" | "teal"> = {
@@ -93,6 +35,14 @@ const SUBJECT_ICON_MAP: Record<string, string> = {
   cs: "Cpu",
 };
 
+function formatStudyTime(minutes: number): string {
+  if (minutes < 60) return `${minutes}m`;
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  if (mins === 0) return `${hours}h`;
+  return `${hours}h ${mins}m`;
+}
+
 interface HomeClientProps {
   subjects: Subject[];
 }
@@ -103,24 +53,32 @@ const sectionVariants = {
 };
 
 export default function HomeClient({ subjects }: HomeClientProps) {
-  const [subjectStats] = useState<Record<string, SubjectStats>>(() => {
+  const setSubjects = useQuizStore((s) => s.setSubjects);
+  const globalAnalytics = useQuizStore((s) => s.globalAnalytics);
+  const subjectAnalytics = useQuizStore((s) => s.subjectAnalytics);
+  const currentStreak = useQuizStore((s) => s.currentStreak);
+  const isEmpty = useQuizStore((s) => s.isEmpty);
+
+  useEffect(() => {
+    setSubjects(subjects);
+  }, [subjects, setSubjects]);
+
+  const subjectStats = useMemo<Record<string, SubjectStats>>(() => {
     const stats: Record<string, SubjectStats> = {};
-    for (const s of subjects) {
-      stats[s.id] = computeSubjectStats(s.id);
+    for (const sa of subjectAnalytics) {
+      stats[sa.subjectId] = {
+        avgPct: sa.averageScore,
+        totalAttempts: sa.totalAttempts,
+        bestPct: sa.bestScore,
+      };
     }
     return stats;
-  });
-
-  const [globalStats] = useState(() => ({
-    avg: computeGlobalAvg(),
-    quizzes: computeTotalQuizzes(),
-    hours: computeTotalStudyTime(),
-    streak: 0,
-  }));
+  }, [subjectAnalytics]);
 
   const enrichedSubjects = useMemo(() => {
-    const result = subjects.map((s) => {
-      const stats = subjectStats[s.id];
+    const saMap = new Map(subjectAnalytics.map((sa) => [sa.subjectId, sa]));
+    return subjects.map((s) => {
+      const sa = saMap.get(s.id);
       const totalSets = s.chapters.reduce((sum, ch) => sum + ch.sets.length, 0);
       return {
         id: s.id,
@@ -129,28 +87,19 @@ export default function HomeClient({ subjects }: HomeClientProps) {
         color: SUBJECT_COLOR_MAP[s.id] || "gold",
         chapters: s.chapters.length,
         sets: totalSets,
-        progress: stats?.totalAttempts ? Math.min(100, Math.round((stats.totalAttempts / Math.max(totalSets, 1)) * 100)) : 0,
-        bestScore: stats?.bestPct ?? 0,
-        attempts: stats?.totalAttempts ?? 0,
-        avgScore: stats?.avgPct ?? 0,
+        progress: sa
+          ? Math.min(100, Math.round((sa.chaptersCompleted / Math.max(sa.totalChapters, 1)) * 100))
+          : 0,
+        bestScore: sa?.bestScore ?? 0,
+        attempts: sa?.totalAttempts ?? 0,
+        avgScore: sa?.averageScore ?? 0,
       };
     });
+  }, [subjects, subjectAnalytics]);
 
-    result.push({
-      id: "coding-lab",
-      name: "Coding Lab",
-      iconName: "Terminal",
-      color: "teal",
-      chapters: 5,
-      sets: 24,
-      progress: 0,
-      bestScore: 0,
-      attempts: 0,
-      avgScore: 0,
-    });
-
-    return result;
-  }, [subjects, subjectStats]);
+  const delta = globalAnalytics.recentScoreDelta;
+  const avgTrendLabel = delta > 0 ? "vs avg" : delta < 0 ? "recently" : "stable";
+  const streakVsBest = currentStreak - globalAnalytics.bestStreak;
 
   return (
     <div className="min-h-[100dvh] px-4 py-8 sm:px-6 sm:py-10 lg:px-10 lg:py-12">
@@ -162,10 +111,9 @@ export default function HomeClient({ subjects }: HomeClientProps) {
         >
           <DashboardHeader
             userName="Ahmad"
-            quizCount={globalStats.quizzes}
+            quizCount={isEmpty ? 0 : globalAnalytics.weeklyQuizzes}
           />
         </motion.div>
-
 
         <motion.div
           className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
@@ -177,37 +125,36 @@ export default function HomeClient({ subjects }: HomeClientProps) {
           <StatCard
             icon={Trophy}
             iconColor="gold"
-            value={`${globalStats.avg}%`}
-            label="Average Score"
-            trend={12}
-            trendLabel="vs last week"
+            value={isEmpty ? "--" : `${globalAnalytics.averageScore}%`}
+            label={isEmpty ? "No attempts yet" : "Average Score"}
+            trend={isEmpty ? 0 : delta}
+            trendLabel={isEmpty ? "" : avgTrendLabel}
           />
           <StatCard
             icon={CheckCircle}
             iconColor="blue"
-            value={`${globalStats.quizzes}`}
-            label="Quizzes Completed"
-            trend={5}
-            trendLabel="new"
+            value={isEmpty ? "--" : `${globalAnalytics.totalQuizzes}`}
+            label={isEmpty ? "No attempts yet" : "Quizzes Completed"}
+            trend={isEmpty ? 0 : globalAnalytics.weeklyQuizzes}
+            trendLabel={isEmpty ? "" : "this week"}
           />
           <StatCard
             icon={Clock}
             iconColor="green"
-            value={`${globalStats.hours}h`}
-            label="Study Time"
-            trend={2}
-            trendLabel="hours more"
+            value={isEmpty ? "--" : formatStudyTime(globalAnalytics.totalStudyMinutes)}
+            label={isEmpty ? "No attempts yet" : "Study Time"}
+            trend={0}
+            trendLabel="total"
           />
           <StatCard
             icon={Flame}
             iconColor="purple"
-            value="5"
-            label="Day Streak"
-            trend={-1}
-            trendLabel="from best"
+            value={isEmpty ? "--" : `${currentStreak}`}
+            label={isEmpty ? "No attempts yet" : "Day Streak"}
+            trend={isEmpty ? 0 : streakVsBest}
+            trendLabel={isEmpty ? "" : "from best"}
           />
         </motion.div>
-
 
         <motion.div
           className="mb-8"
@@ -230,7 +177,6 @@ export default function HomeClient({ subjects }: HomeClientProps) {
           </div>
           <SubjectBentoGrid subjects={enrichedSubjects} stats={subjectStats} />
         </motion.div>
-
 
         <motion.div
           className="grid grid-cols-1 gap-4 lg:grid-cols-3"

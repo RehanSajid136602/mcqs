@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useStreak } from "@/hooks/useStreak";
+import { useQuizStore } from "@/lib/store";
 
 const fireDotVariants = {
   initial: { opacity: 0.4, scale: 0.8 },
@@ -9,7 +9,8 @@ const fireDotVariants = {
 };
 
 export default function StreakCard() {
-  const { currentStreak, bestStreak } = useStreak();
+  const currentStreak = useQuizStore((s) => s.currentStreak);
+  const bestStreak = useQuizStore((s) => s.bestStreak);
 
   return (
     <div className="relative overflow-hidden rounded-[20px] border border-[rgba(245,197,24,0.2)] bg-gradient-to-br from-[rgba(245,197,24,0.1)] to-[rgba(245,197,24,0.02)] p-6 text-center">
@@ -22,19 +23,22 @@ export default function StreakCard() {
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", stiffness: 200, damping: 15 }}
       >
-        {currentStreak}
+        {currentStreak === 0 ? "--" : currentStreak}
       </motion.div>
 
-      <p className="mb-4 text-sm text-[var(--text-secondary)]">days in a row</p>
+      <p className="mb-4 text-sm text-[var(--text-secondary)]">
+        {currentStreak === 0 ? "Start a quiz today" : "days in a row"}
+      </p>
 
       <div className="flex justify-center gap-1.5">
         {Array.from({ length: 5 }).map((_, i) => (
           <motion.span
             key={i}
             className="block h-2.5 w-2.5 rounded-full bg-[var(--accent)]"
+            style={{ opacity: currentStreak === 0 ? 0.25 : undefined }}
             variants={fireDotVariants}
             initial="initial"
-            animate="animate"
+            animate={currentStreak === 0 ? "initial" : "animate"}
             transition={{
               duration: 2,
               repeat: Infinity,
@@ -51,7 +55,9 @@ export default function StreakCard() {
         <strong className="text-[var(--accent)]">{bestStreak} days</strong>
         <br />
         <span className="text-[var(--teal)]">
-          Keep practicing daily to maintain your streak!
+          {currentStreak === 0
+            ? "Complete a quiz to begin your streak"
+            : "Keep practicing daily to maintain your streak!"}
         </span>
       </p>
     </div>

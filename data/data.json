@@ -2304,7 +2304,7 @@
                     "45° out of phase"
                   ],
                   "correct": 1,
-                  "explanation": "Here is the explanation text for the correct answer:\n\n\"In a purely resistive AC circuit, the voltage and current are in phase because the resistor does not introduce any phase shift. The current flows in sync with the applied voltage.\"\n\n**Breakdown:**\n\n* **Main reason clearly covered:** Absence of phase shift in resistive circuits\n* **Simple, easy-to-understand English:** Yes\n* **Concise:** 2 short sentences\n* **No repetition of question or answer choices:** Confirmed\n* **Only explanation text provided:** Confirmed"
+                  "explanation": "\"In a purely resistive AC circuit, the voltage and current are in phase because the resistor does not introduce any phase shift. The current flows in sync with the applied voltage.\"\n\n**Breakdown:**\n\n* **Main reason clearly covered:** Absence of phase shift in resistive circuits\n* **Simple, easy-to-understand English:** Yes\n* **Concise:** 2 short sentences\n* **No repetition of question or answer choices:** Confirmed\n* **Only explanation text provided:** Confirmed"
                 },
                 {
                   "q": "In an inductive AC circuit, the voltage:",
@@ -2381,7 +2381,7 @@
                     "Four diodes"
                   ],
                   "correct": 3,
-                  "explanation": "Here is the explanation text for the correct answer:\n\n\"A full-wave bridge rectifier requires four diodes because they work together in pairs to convert both the positive and negative halves of the AC input waveform into DC output. This configuration ensures that current flows in the same direction through the load, regardless of the input polarity, which is essential for efficient full-wave rectification.\""
+                  "explanation": "A full-wave bridge rectifier requires four diodes because they work together in pairs to convert both the positive and negative halves of the AC input waveform into DC output. This configuration ensures that current flows in the same direction through the load, regardless of the input polarity, which is essential for efficient full-wave rectification."
                 },
                 {
                   "q": "Self-inductance of a coil will be one henry if:",
@@ -2475,7 +2475,7 @@
                     "1 ohm resistance is in both coils"
                   ],
                   "correct": 0,
-                  "explanation": "Here is the explanation text for the correct answer:\n\n\"The correct answer is right because mutual inductance is defined as the ratio of the electromotive force (EMF) induced in one coil to the rate of change of current in the other coil. Therefore, when 1 volt is induced by a current change of 1 ampere per second in the other coil, it meets the definition of 1 henry of mutual inductance by showing a direct proportionality between the induced EMF and the rate of current change.\""
+                  "explanation": "The correct answer is right because mutual inductance is defined as the ratio of the electromotive force (EMF) induced in one coil to the rate of change of current in the other coil. Therefore, when 1 volt is induced by a current change of 1 ampere per second in the other coil, it meets the definition of 1 henry of mutual inductance by showing a direct proportionality between the induced EMF and the rate of current change."
                 },
                 {
                   "q": "The phenomenon in which a changing current induces an emf in the same coil is called:",
@@ -3067,7 +3067,7 @@
                     "Thermal energy"
                   ],
                   "correct": 1,
-                  "explanation": "Here is the explanation in 2-3 short, clear sentences:\n\nThe mass defect represents the difference in mass between individual nucleons and the nucleus as a whole. This \"lost\" mass is converted into binding energy, which is the energy that holds the nucleus together, according to Einstein's mass-energy equivalence principle (E=mc²)."
+                  "explanation": "The mass defect represents the difference in mass between individual nucleons and the nucleus as a whole. This \"lost\" mass is converted into binding energy, which is the energy that holds the nucleus together, according to Einstein's mass-energy equivalence principle (E=mc²)."
                 },
                 {
                   "q": "Einstein's mass-energy equivalence equation is:",
@@ -3332,7 +3332,7 @@
                     "Beta decay"
                   ],
                   "correct": 0,
-                  "explanation": "Here is the explanation in the requested format:\n\nThe correct answer is Fission because it specifically refers to the process where a heavy atomic nucleus divides into two or more smaller nuclei, often accompanied by the release of a significant amount of energy. This process is distinct from Fusion, which combines light nuclei, and Alpha/Beta decay, which involve the emission of specific particles from the nucleus."
+                  "explanation": "The correct answer is Fission because it specifically refers to the process where a heavy atomic nucleus divides into two or more smaller nuclei, often accompanied by the release of a significant amount of energy. This process is distinct from Fusion, which combines light nuclei, and Alpha/Beta decay, which involve the emission of specific particles from the nucleus."
                 },
                 {
                   "q": "Radiation with highest ionizing power is:",
@@ -3354,7 +3354,7 @@
                     "Beta particle"
                   ],
                   "correct": 0,
-                  "explanation": "Here is the explanation in the requested format:\n\nA neutron has nearly the same mass as a proton because both are nucleons found in the nucleus of an atom, but unlike a proton, a neutron has no electric charge, making it neutral. This lack of charge distinguishes it from protons (positively charged), electrons (negatively charged), and beta particles (which are high-energy electrons, also negatively charged)."
+                  "explanation": "A neutron has nearly the same mass as a proton because both are nucleons found in the nucleus of an atom, but unlike a proton, a neutron has no electric charge, making it neutral. This lack of charge distinguishes it from protons (positively charged), electrons (negatively charged), and beta particles (which are high-energy electrons, also negatively charged)."
                 },
                 {
                   "q": "The charge on an alpha particle is:",
@@ -3636,7 +3636,7 @@
                     "Rotating"
                   ],
                   "correct": 1,
-                  "explanation": "Here is the explanation in the requested format:\n\nBlueshift happens when light waves from an object get compressed. This compression occurs because the object is approaching the observer, which in this case is Earth. Therefore, the correct answer is Moving towards Earth, as this motion causes the light waves to shorten, resulting in a blueshift."
+                  "explanation": "Blueshift happens when light waves from an object get compressed. This compression occurs because the object is approaching the observer, which in this case is Earth. Therefore, the correct answer is Moving towards Earth, as this motion causes the light waves to shorten, resulting in a blueshift."
                 },
                 {
                   "q": "The redshift formula is:",
@@ -3669,7 +3669,7 @@
                     "100 billion years ago"
                   ],
                   "correct": 2,
-                  "explanation": "Here is the explanation in the requested format:\n\nThe correct answer is based on scientific evidence from various fields, including astronomy and physics. Observations of cosmic microwave background radiation and the expansion rate of the universe consistently point to this timeframe. Therefore, 13.8 billion years ago is the widely accepted age of the universe according to the Big Bang theory."
+                  "explanation": "The correct answer is based on scientific evidence from various fields, including astronomy and physics. Observations of cosmic microwave background radiation and the expansion rate of the universe consistently point to this timeframe. Therefore, 13.8 billion years ago is the widely accepted age of the universe according to the Big Bang theory."
                 },
                 {
                   "q": "The age of universe T is related to Hubble's constant by:",
@@ -3763,7 +3763,7 @@
                     "The further away galaxies are the slower they are moving."
                   ],
                   "correct": 3,
-                  "explanation": "Here is the explanation in 2-3 short, clear sentences:\n\nThe correct answer is incorrect because, according to the Big-Bang theory and Hubble's Law, the further away galaxies are, the **faster** they are moving away from us, not slower. This is due to the expansion of space itself, which causes more distant galaxies to recede more rapidly."
+                  "explanation": "The correct answer is incorrect because, according to the Big-Bang theory and Hubble's Law, the further away galaxies are, the **faster** they are moving away from us, not slower. This is due to the expansion of space itself, which causes more distant galaxies to recede more rapidly."
                 }
               ]
             }
@@ -4460,7 +4460,7 @@
                     "Both B and C"
                   ],
                   "correct": 3,
-                  "explanation": "Here is the explanation in the requested format:\n\nThe correct answer is \"Both B and C\" because the frequency of X-rays is directly influenced by the accelerating potential (B), which determines the energy of the electrons, and the nature of the target (C), which affects how those electrons interact to produce X-rays. These factors collectively determine the energy and thus the frequency of the emitted X-rays."
+                  "explanation": "The correct answer is \"Both B and C\" because the frequency of X-rays is directly influenced by the accelerating potential (B), which determines the energy of the electrons, and the nature of the target (C), which affects how those electrons interact to produce X-rays. These factors collectively determine the energy and thus the frequency of the emitted X-rays."
                 },
                 {
                   "q": "Target material used in X-rays tube must have following properties:",
@@ -4560,7 +4560,7 @@
                     "Translational symmetry"
                   ],
                   "correct": 1,
-                  "explanation": "Here is the explanation in the requested format:\n\nReflection symmetry involves a line of symmetry where one half is a mirror image of the other. This concept directly relates to the idea of mirroring, making \"Mirror symmetry\" the correct term. It differs from rotational, point, or translational symmetry, which involve spinning, a central point, or sliding, respectively."
+                  "explanation": "Reflection symmetry involves a line of symmetry where one half is a mirror image of the other. This concept directly relates to the idea of mirroring, making \"Mirror symmetry\" the correct term. It differs from rotational, point, or translational symmetry, which involve spinning, a central point, or sliding, respectively."
                 },
                 {
                   "q": "Rotational symmetry means an object's properties remain unchanged when:",
@@ -4604,7 +4604,7 @@
                     "Stop mid-air"
                   ],
                   "correct": 2,
-                  "explanation": "Here is the explanation in 2-3 short, clear sentences:\n\nThe cannonball's velocity is not enough to counteract Earth's gravitational pull since it's below orbital velocity. As a result, gravity will continuously pull the cannonball towards the Earth, causing it to fall back down."
+                  "explanation": "The cannonball's velocity is not enough to counteract Earth's gravitational pull since it's below orbital velocity. As a result, gravity will continuously pull the cannonball towards the Earth, causing it to fall back down."
                 },
                 {
                   "q": "Centripetal acceleration for circular motion is:",
@@ -4637,7 +4637,7 @@
                     "Inspiring innovation"
                   ],
                   "correct": 2,
-                  "explanation": "Here is the explanation in the requested format:\n\nSubatomic particle research requires highly specialized and often hazardous materials, leading to significant safety and security concerns. These risks include the potential for dangerous accidents or the misuse of findings to develop devastating weapons. Therefore, the creation of nuclear weapons stands out as a notable disadvantage due to its destructive potential and threat to global security."
+                  "explanation": "Subatomic particle research requires highly specialized and often hazardous materials, leading to significant safety and security concerns. These risks include the potential for dangerous accidents or the misuse of findings to develop devastating weapons. Therefore, the creation of nuclear weapons stands out as a notable disadvantage due to its destructive potential and threat to global security."
                 },
                 {
                   "q": "Mathematical beauty in physics includes:",
@@ -4698,7 +4698,7 @@
                     "Scales"
                   ],
                   "correct": 2,
-                  "explanation": "Here is the explanation in the requested format:\n\nTranslational symmetry means the object looks the same after moving. Sliding without changing means the object's shape and size stay the same, just its position changes, which is what translational symmetry is about. This is different from rotating, reflecting, or scaling, which alter the object's appearance or size."
+                  "explanation": "Translational symmetry means the object looks the same after moving. Sliding without changing means the object's shape and size stay the same, just its position changes, which is what translational symmetry is about. This is different from rotating, reflecting, or scaling, which alter the object's appearance or size."
                 },
                 {
                   "q": "Starfish exhibit which type of symmetry?",
@@ -4709,7 +4709,7 @@
                     "Translational"
                   ],
                   "correct": 1,
-                  "explanation": "Here is the explanation in the requested format:\n\nStarfish have a body plan with multiple arms radiating from a central point, allowing them to move and sense their environment equally well from any direction. This characteristic arrangement indicates radial symmetry, where the body parts are arranged around a central axis. Therefore, radial symmetry is the correct classification for starfish."
+                  "explanation": "Starfish have a body plan with multiple arms radiating from a central point, allowing them to move and sense their environment equally well from any direction. This characteristic arrangement indicates radial symmetry, where the body parts are arranged around a central axis. Therefore, radial symmetry is the correct classification for starfish."
                 },
                 {
                   "q": "Symmetry is important in which field?",
@@ -4720,7 +4720,7 @@
                     "Music only"
                   ],
                   "correct": 2,
-                  "explanation": "Here is the explanation in the requested format:\n\nSymmetry is a fundamental principle that appears in various disciplines, not just one. It is used in architecture to create balanced designs, in art to achieve visual harmony, and also in other fields like physics, biology, and mathematics to describe patterns and structures. This broad applicability makes the correct answer encompass multiple fields."
+                  "explanation": "Symmetry is a fundamental principle that appears in various disciplines, not just one. It is used in architecture to create balanced designs, in art to achieve visual harmony, and also in other fields like physics, biology, and mathematics to describe patterns and structures. This broad applicability makes the correct answer encompass multiple fields."
                 },
                 {
                   "q": "In Newton's cannonball, if velocity equals orbital velocity, the ball will:",
@@ -5360,7 +5360,7 @@
               "label": "Set 5",
               "questions": [
                 {
-                  "q": "A function $f(x) = mx + c$ represents a straight line when:",
+                  "q": "A function $f(x) = mx + c$ represents a non-horizontal straight line when:",
                   "options": [
                     "$m = 0$",
                     "$m \\neq 0$",
@@ -5558,7 +5558,7 @@
                     "1",
                     "2",
                     "3",
-                    "$\\sqrt[3]{8}$"
+                    "$\\sqrt[3]{7}$"
                   ],
                   "correct": 1,
                   "explanation": "To find \\( f^{-1}(7) \\), solve \\( f(x) = 7 \\). For \\( f(x) = x^3 - 1 \\), set \\( x^3 - 1 = 7 \\), so \\( x^3 = 8 \\). Taking the cube root gives \\( x = \\sqrt[3]{8} = 2 \\). Since \\( f(2) = 7 \\), the inverse \\( f^{-1}(7) = 2 \\). The correct answer is 2 because it satisfies the equation."
@@ -7913,7 +7913,7 @@
                     "Illuminated"
                   ],
                   "correct": 1,
-                  "explanation": "Here is the explanation text for the correct answer:\n\n\"The correct answer is 'Destroyed or wiped out' because in the context of the story, 'obliterated' describes the line between earth and sky being completely removed from view by the heavy snow, implying it was totally erased or eliminated, not created, decorated, or illuminated.\""
+                  "explanation": "The correct answer is 'Destroyed or wiped out' because in the context of the story, 'obliterated' describes the line between earth and sky being completely removed from view by the heavy snow, implying it was totally erased or eliminated, not created, decorated, or illuminated."
                 },
                 {
                   "q": "The narrator had been following the path of the future railway for how many kilometers?",
@@ -8117,7 +8117,7 @@
                     "A wide river"
                   ],
                   "correct": 1,
-                  "explanation": "Here is the explanation text for the correct answer:\n\n\"A deep, narrow valley is the correct meaning of 'ravine' because, in the context of the text, the author mentions the risk of falling into a 'deep ravine' while stumbling around in the dark, implying a steep and narrow gorge-like feature, which aligns with the geographical definition of a ravine.\""
+                  "explanation": "A deep, narrow valley is the correct meaning of 'ravine' because, in the context of the text, the author mentions the risk of falling into a 'deep ravine' while stumbling around in the dark, implying a steep and narrow gorge-like feature, which aligns with the geographical definition of a ravine."
                 },
                 {
                   "q": "Why did the narrator decide to rest in the cave?",
@@ -8128,7 +8128,7 @@
                     "He was lost"
                   ],
                   "correct": 1,
-                  "explanation": "Here is the explanation text for the correct answer:\n\nThe narrator decided to rest in the cave because he was physically exhausted, having gone without food (hungry), was suffering from the cold, and had just suffered a fall that injured his hands (tripped and fallen), making it necessary for him to take a break to recover."
+                  "explanation": "The narrator decided to rest in the cave because he was physically exhausted, having gone without food (hungry), was suffering from the cold, and had just suffered a fall that injured his hands (tripped and fallen), making it necessary for him to take a break to recover."
                 },
                 {
                   "q": "What does 'swirling' describe in the story?",
@@ -8244,7 +8244,7 @@
                     "By lighting a fire"
                   ],
                   "correct": 1,
-                  "explanation": "Here is the explanation text for the correct answer:\n\nCheng-yu showed his father he was at his post by sitting in the doorway, making his presence visibly clear and demonstrating responsibility without needing to make a disturbance, which aligns with the story's emphasis on duty and quiet dedication. This action allowed his father to see him directly, confirming his presence at the assigned location."
+                  "explanation": "Cheng-yu showed his father he was at his post by sitting in the doorway, making his presence visibly clear and demonstrating responsibility without needing to make a disturbance, which aligns with the story's emphasis on duty and quiet dedication. This action allowed his father to see him directly, confirming his presence at the assigned location."
                 },
                 {
                   "q": "What is the meaning of 'rent' in the story?",
@@ -8266,7 +8266,7 @@
                     "Traffic director"
                   ],
                   "correct": 1,
-                  "explanation": "Here is the explanation text for the correct answer:\n\n\"The correct answer is 'Materials Development Chief' because the narrator explicitly mentions this title in a self-deprecating remark, 'that would be the end of this Materials Development Chief', indicating their official role in the project, overseeing the development and management of construction materials.\""
+                  "explanation": "The correct answer is 'Materials Development Chief' because the narrator explicitly mentions this title in a self-deprecating remark, 'that would be the end of this Materials Development Chief', indicating their official role in the project, overseeing the development and management of construction materials."
                 },
                 {
                   "q": "What does 'clamped' mean in the glossary?",
@@ -8432,7 +8432,7 @@
                     "To make something cold"
                   ],
                   "correct": 1,
-                  "explanation": "Here is the explanation in the requested format:\n\n\"The correct answer is 'To initiate conversation' because 'break the ice' is an idiom used when someone starts a conversation in a friendly way to make people feel more comfortable, especially in awkward or unfamiliar situations.\""
+                  "explanation": "The correct answer is 'To initiate conversation' because 'break the ice' is an idiom used when someone starts a conversation in a friendly way to make people feel more comfortable, especially in awkward or unfamiliar situations."
                 },
                 {
                   "q": "Which idiom means 'to reveal a secret'?",
@@ -8537,7 +8537,7 @@
                     "Cut to the chase"
                   ],
                   "correct": 0,
-                  "explanation": "Here is the explanation in the requested format:\n\n\"The correct answer is 'Hit the sack' because this idiom is a common expression that means to go to bed or sleep. The phrase originated from the idea of people sleeping on sacks or mattresses in the past, making it a fitting metaphor for retiring for the night.\""
+                  "explanation": "The correct answer is 'Hit the sack' because this idiom is a common expression that means to go to bed or sleep. The phrase originated from the idea of people sleeping on sacks or mattresses in the past, making it a fitting metaphor for retiring for the night."
                 },
                 {
                   "q": "What is a proverb?",
@@ -8637,7 +8637,7 @@
                     "Lawyer"
                   ],
                   "correct": 1,
-                  "explanation": "Here is the explanation in 2-3 short, clear sentences:\n\nThe correct answer is Assessor because the visitor is referred to as \"The Income-Tax Man\" in the chapter, which directly relates to the job of an Assessor, responsible for evaluating and collecting taxes. This title is a clear indicator of his profession, distinguishing it from the other options."
+                  "explanation": "The correct answer is Assessor because the visitor is referred to as \"The Income-Tax Man\" in the chapter, which directly relates to the job of an Assessor, responsible for evaluating and collecting taxes. This title is a clear indicator of his profession, distinguishing it from the other options."
                 },
                 {
                   "q": "How much did the narrator claim to earn from his talks?",
@@ -8819,7 +8819,7 @@
                     "Poor people"
                   ],
                   "correct": 1,
-                  "explanation": "Here is the explanation in 2-3 short, clear sentences:\n\nThe story criticizes the tax system and evasion because it highlights the frustrations and complexities faced by honest taxpayers, like Mr. Bunder, who struggle to comply, while others evade taxes without consequences, exposing flaws in the system. This focus on the challenges and injustices within the tax process makes it the central critique of the narrative."
+                  "explanation": "The story criticizes the tax system and evasion because it highlights the frustrations and complexities faced by honest taxpayers, like Mr. Bunder, who struggle to comply, while others evade taxes without consequences, exposing flaws in the system. This focus on the challenges and injustices within the tax process makes it the central critique of the narrative."
                 },
                 {
                   "q": "How does the story end?",
@@ -8830,7 +8830,7 @@
                     "The narrator celebrates"
                   ],
                   "correct": 2,
-                  "explanation": "Here is the explanation in the requested format:\n\nThe story ends with the narrator feeling guilty about lying because, after the income-tax man's unexpected kindness and trust, the narrator's conscience gets the better of them, leading to remorse for the dishonest intentions. This twist highlights the narrative's theme of morality and the impact of kindness on one's ethical stance. The guilt signifies a moral awakening in the narrator."
+                  "explanation": "The story ends with the narrator feeling guilty about lying because, after the income-tax man's unexpected kindness and trust, the narrator's conscience gets the better of them, leading to remorse for the dishonest intentions. This twist highlights the narrative's theme of morality and the impact of kindness on one's ethical stance. The guilt signifies a moral awakening in the narrator."
                 },
                 {
                   "q": "What literary device is prominent in the story?",
@@ -8863,7 +8863,7 @@
                     "Romance"
                   ],
                   "correct": 1,
-                  "explanation": "Here is the explanation text:\n\nThe story uses irony and exaggeration to critique societal attitudes towards bureaucracy and authority, which are hallmarks of satirical humor. Its lighthearted and humorous tone, rather than focusing on romantic relationships, tragic events, or futuristic/scientific elements, further confirms this classification."
+                  "explanation": "The story uses irony and exaggeration to critique societal attitudes towards bureaucracy and authority, which are hallmarks of satirical humor. Its lighthearted and humorous tone, rather than focusing on romantic relationships, tragic events, or futuristic/scientific elements, further confirms this classification."
                 },
                 {
                   "q": "What is the main theme of the story?",
@@ -8919,7 +8919,7 @@
                     "A container"
                   ],
                   "correct": 1,
-                  "explanation": "Here is the explanation in the requested format:\n\nThe correct answer is \"The night sky\" because in the poetic context of Rubayiat of Omar Khayyam, \"Bowl of Night\" is a metaphor that beautifully encapsulates the vast, dark expanse of the night sky, reflecting the poem's themes of introspection and the cosmos. This interpretation aligns with the mystical and philosophical tone of the verses, where celestial imagery is often used to explore deeper existential questions."
+                  "explanation": "The correct answer is \"The night sky\" because in the poetic context of Rubayiat of Omar Khayyam, \"Bowl of Night\" is a metaphor that beautifully encapsulates the vast, dark expanse of the night sky, reflecting the poem's themes of introspection and the cosmos. This interpretation aligns with the mystical and philosophical tone of the verses, where celestial imagery is often used to explore deeper existential questions."
                 },
                 {
                   "q": "Who is the 'Hunter of the East'?",
@@ -8941,7 +8941,7 @@
                     "It lasts forever"
                   ],
                   "correct": 1,
-                  "explanation": "Here is the explanation in the requested format:\n\nThe correct answer is \"It turns to ashes\" because the Rubaiyat of Omar Khayyam often portrays the fleeting nature of worldly desires, suggesting they ultimately lead to disillusionment and vanish, much like ashes. This theme aligns with the poem's philosophical reflection on the transience of life and human aspirations."
+                  "explanation": "The correct answer is \"It turns to ashes\" because the Rubaiyat of Omar Khayyam often portrays the fleeting nature of worldly desires, suggesting they ultimately lead to disillusionment and vanish, much like ashes. This theme aligns with the poem's philosophical reflection on the transience of life and human aspirations."
                 },
                 {
                   "q": "What does the 'Moving Finger' represent?",
@@ -8952,7 +8952,7 @@
                     "Time"
                   ],
                   "correct": 1,
-                  "explanation": "Here is the explanation in 2-3 short, clear sentences:\n\nThe 'Moving Finger' represents Fate/Destiny because it symbolizes an unstoppable, guiding force that writes the path of human life, which cannot be altered. This concept aligns with the theme of the Rubaiyat, where Omar Khayyam reflects on the inevitability of destiny in controlling human affairs."
+                  "explanation": "The 'Moving Finger' represents Fate/Destiny because it symbolizes an unstoppable, guiding force that writes the path of human life, which cannot be altered. This concept aligns with the theme of the Rubaiyat, where Omar Khayyam reflects on the inevitability of destiny in controlling human affairs."
                 },
                 {
                   "q": "What cannot cancel what the Moving Finger has written?",
@@ -8985,7 +8985,7 @@
                     "A poem"
                   ],
                   "correct": 1,
-                  "explanation": "Here is the explanation in 2-3 short, clear sentences:\n\n\"Youth's sweet-scented manuscript\" symbolizes **Young life** because it metaphorically compares the vibrant and innocent phase of youth to a precious, fragrant manuscript, emphasizing its beauty, value, and the stories it holds, much like the experiences and potential of young life. The phrase captures the essence of youth being a unique, irreplaceable, and cherished stage of human existence."
+                  "explanation": "\"Youth's sweet-scented manuscript\" symbolizes **Young life** because it metaphorically compares the vibrant and innocent phase of youth to a precious, fragrant manuscript, emphasizing its beauty, value, and the stories it holds, much like the experiences and potential of young life. The phrase captures the essence of youth being a unique, irreplaceable, and cherished stage of human existence."
                 },
                 {
                   "q": "What bird is mentioned in the poem?",
@@ -9035,7 +9035,7 @@
                     "A treasure chest"
                   ],
                   "correct": 1,
-                  "explanation": "Here is the explanation in the requested format:\n\nThe correct answer is \"Mystery of life/death\" because it represents an abstract, profound concept that aligns with the philosophical and existential themes in Rubayiat of Omar Khayyam. The phrase symbolizes the unknown or inscrutable aspects of human existence, which cannot be easily understood or \"unlocked\"."
+                  "explanation": "The correct answer is \"Mystery of life/death\" because it represents an abstract, profound concept that aligns with the philosophical and existential themes in Rubayiat of Omar Khayyam. The phrase symbolizes the unknown or inscrutable aspects of human existence, which cannot be easily understood or \"unlocked\"."
                 },
                 {
                   "q": "What does the poem say about tears and fate?",
@@ -9090,7 +9090,7 @@
                     "Forget it"
                   ],
                   "correct": 1,
-                  "explanation": "Here is the explanation in the requested format:\n\nThe poem suggests embracing the present moment because it emphasizes the importance of living in the now, as the future is uncertain and the past cannot be changed. Omar Khayyam's verses often highlight the fleeting nature of life, encouraging readers to make the most of every moment. This philosophical outlook aligns with the idea of embracing the present."
+                  "explanation": "The poem suggests embracing the present moment because it emphasizes the importance of living in the now, as the future is uncertain and the past cannot be changed. Omar Khayyam's verses often highlight the fleeting nature of life, encouraging readers to make the most of every moment. This philosophical outlook aligns with the idea of embracing the present."
                 },
                 {
                   "q": "What is Omar Khayyam's original profession?",

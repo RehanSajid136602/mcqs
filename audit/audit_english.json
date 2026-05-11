@@ -1,0 +1,335 @@
+{
+  "subject": "English",
+  "total_questions": 372,
+  "total_flagged": 17,
+  "chapters": 15,
+  "sets": 31,
+  "entries": [
+    {
+      "subject": "English",
+      "chapter": "Chapter 01: Lingkuan Gorge",
+      "set_id": "chapter-01-lingkuan-gorge-set-1",
+      "question_index": 0,
+      "question": "What does the word 'obliterated' mean in the context of the story?",
+      "marked_correct_index": 1,
+      "marked_correct_answer": "Destroyed or wiped out",
+      "verdict": "WRONG_EXPLANATION",
+      "issue": "Explanation is placeholder text - actual content missing",
+      "suggested_correct_index": null,
+      "suggested_correct_answer": null,
+      "suggested_explanation": "Fill in actual explanation based on source text"
+    },
+    {
+      "subject": "English",
+      "chapter": "Chapter 01: Lingkuan Gorge",
+      "set_id": "chapter-01-lingkuan-gorge-set-2",
+      "question_index": 6,
+      "question": "What is the meaning of 'ravine'?",
+      "marked_correct_index": 1,
+      "marked_correct_answer": "A deep, narrow valley",
+      "verdict": "WRONG_EXPLANATION",
+      "issue": "Explanation is placeholder text - actual content missing",
+      "suggested_correct_index": null,
+      "suggested_correct_answer": null,
+      "suggested_explanation": "Fill in actual explanation based on source text"
+    },
+    {
+      "subject": "English",
+      "chapter": "Chapter 01: Lingkuan Gorge",
+      "set_id": "chapter-01-lingkuan-gorge-set-2",
+      "question_index": 7,
+      "question": "Why did the narrator decide to rest in the cave?",
+      "marked_correct_index": 1,
+      "marked_correct_answer": "He was hungry, cold, and had tripped and fallen",
+      "verdict": "WRONG_EXPLANATION",
+      "issue": "Explanation is placeholder text - actual content missing",
+      "suggested_correct_index": null,
+      "suggested_correct_answer": null,
+      "suggested_explanation": "Fill in actual explanation based on source text"
+    },
+    {
+      "subject": "English",
+      "chapter": "Chapter 01: Lingkuan Gorge",
+      "set_id": "chapter-01-lingkuan-gorge-set-3",
+      "question_index": 5,
+      "question": "How did Cheng-yu show his father he was at his post?",
+      "marked_correct_index": 1,
+      "marked_correct_answer": "By sitting in the doorway where his father could see him",
+      "verdict": "WRONG_EXPLANATION",
+      "issue": "Explanation is placeholder text - actual content missing",
+      "suggested_correct_index": null,
+      "suggested_correct_answer": null,
+      "suggested_explanation": "Fill in actual explanation based on source text"
+    },
+    {
+      "subject": "English",
+      "chapter": "Chapter 01: Lingkuan Gorge",
+      "set_id": "chapter-01-lingkuan-gorge-set-3",
+      "question_index": 7,
+      "question": "What was the narrator's role or job title?",
+      "marked_correct_index": 1,
+      "marked_correct_answer": "Materials Development Chief",
+      "verdict": "WRONG_EXPLANATION",
+      "issue": "Explanation is placeholder text - actual content missing",
+      "suggested_correct_index": null,
+      "suggested_correct_answer": null,
+      "suggested_explanation": "Fill in actual explanation based on source text"
+    },
+    {
+      "subject": "English",
+      "chapter": "Population Explosion in Pakistan",
+      "set_id": "chapter-02-population-explosion-set-1",
+      "question_index": 9,
+      "question": "What does 'break the ice' mean?",
+      "marked_correct_index": 1,
+      "marked_correct_answer": "To initiate conversation",
+      "verdict": "WRONG_EXPLANATION",
+      "issue": "Explanation is placeholder text - actual content missing",
+      "suggested_correct_index": null,
+      "suggested_correct_answer": null,
+      "suggested_explanation": "Fill in actual explanation based on source text"
+    },
+    {
+      "subject": "English",
+      "chapter": "Population Explosion in Pakistan",
+      "set_id": "chapter-02-population-explosion-set-2",
+      "question_index": 6,
+      "question": "Which idiom means 'to go to bed'?",
+      "marked_correct_index": 0,
+      "marked_correct_answer": "Hit the sack",
+      "verdict": "WRONG_EXPLANATION",
+      "issue": "Explanation is placeholder text - actual content missing",
+      "suggested_correct_index": null,
+      "suggested_correct_answer": null,
+      "suggested_explanation": "Fill in actual explanation based on source text"
+    },
+    {
+      "subject": "English",
+      "chapter": "The Income-Tax Man",
+      "set_id": "chapter-03-the-income-tax-man-set-1",
+      "question_index": 2,
+      "question": "What was the visitor's profession?",
+      "marked_correct_index": 1,
+      "marked_correct_answer": "Assessor",
+      "verdict": "WRONG_EXPLANATION",
+      "issue": "Explanation is placeholder text - actual content missing",
+      "suggested_correct_index": null,
+      "suggested_correct_answer": null,
+      "suggested_explanation": "Fill in actual explanation based on source text"
+    },
+    {
+      "subject": "English",
+      "chapter": "The Income-Tax Man",
+      "set_id": "chapter-03-the-income-tax-man-set-2",
+      "question_index": 6,
+      "question": "What does The Income Tax Man criticize?",
+      "marked_correct_index": 1,
+      "marked_correct_answer": "The tax system and evasion",
+      "verdict": "WRONG_EXPLANATION",
+      "issue": "Explanation is placeholder text - actual content missing",
+      "suggested_correct_index": null,
+      "suggested_correct_answer": null,
+      "suggested_explanation": "Fill in actual explanation based on source text"
+    },
+    {
+      "subject": "English",
+      "chapter": "The Income-Tax Man",
+      "set_id": "chapter-03-the-income-tax-man-set-2",
+      "question_index": 7,
+      "question": "How does the story end?",
+      "marked_correct_index": 2,
+      "marked_correct_answer": "The narrator feels guilty about lying",
+      "verdict": "WRONG_EXPLANATION",
+      "issue": "Explanation is placeholder text - actual content missing",
+      "suggested_correct_index": null,
+      "suggested_correct_answer": null,
+      "suggested_explanation": "Fill in actual explanation based on source text"
+    },
+    {
+      "subject": "English",
+      "chapter": "The Income-Tax Man",
+      "set_id": "chapter-03-the-income-tax-man-set-2",
+      "question_index": 10,
+      "question": "What genre best describes this story?",
+      "marked_correct_index": 1,
+      "marked_correct_answer": "Satirical humor",
+      "verdict": "WRONG_EXPLANATION",
+      "issue": "Explanation is placeholder text - actual content missing",
+      "suggested_correct_index": null,
+      "suggested_correct_answer": null,
+      "suggested_explanation": "Fill in actual explanation based on source text"
+    },
+    {
+      "subject": "English",
+      "chapter": "Rubayiat of Omar Khayyam",
+      "set_id": "chapter-04-rubayiat-of-omar-khayyam-set-1",
+      "question_index": 2,
+      "question": "What does 'Bowl of Night' represent in the poem?",
+      "marked_correct_index": 1,
+      "marked_correct_answer": "The night sky",
+      "verdict": "WRONG_EXPLANATION",
+      "issue": "Explanation is placeholder text - actual content missing",
+      "suggested_correct_index": null,
+      "suggested_correct_answer": null,
+      "suggested_explanation": "Fill in actual explanation based on source text"
+    },
+    {
+      "subject": "English",
+      "chapter": "Rubayiat of Omar Khayyam",
+      "set_id": "chapter-04-rubayiat-of-omar-khayyam-set-1",
+      "question_index": 4,
+      "question": "What happens to 'worldly hope' according to the poem?",
+      "marked_correct_index": 1,
+      "marked_correct_answer": "It turns to ashes",
+      "verdict": "WRONG_EXPLANATION",
+      "issue": "Explanation is placeholder text - actual content missing",
+      "suggested_correct_index": null,
+      "suggested_correct_answer": null,
+      "suggested_explanation": "Fill in actual explanation based on source text"
+    },
+    {
+      "subject": "English",
+      "chapter": "Rubayiat of Omar Khayyam",
+      "set_id": "chapter-04-rubayiat-of-omar-khayyam-set-1",
+      "question_index": 5,
+      "question": "What does the 'Moving Finger' represent?",
+      "marked_correct_index": 1,
+      "marked_correct_answer": "Fate/Destiny",
+      "verdict": "WRONG_EXPLANATION",
+      "issue": "Explanation is placeholder text - actual content missing",
+      "suggested_correct_index": null,
+      "suggested_correct_answer": null,
+      "suggested_explanation": "Fill in actual explanation based on source text"
+    },
+    {
+      "subject": "English",
+      "chapter": "Rubayiat of Omar Khayyam",
+      "set_id": "chapter-04-rubayiat-of-omar-khayyam-set-1",
+      "question_index": 8,
+      "question": "What does 'Youth's sweet-scented manuscript' symbolize?",
+      "marked_correct_index": 1,
+      "marked_correct_answer": "Young life",
+      "verdict": "WRONG_EXPLANATION",
+      "issue": "Explanation is placeholder text - actual content missing",
+      "suggested_correct_index": null,
+      "suggested_correct_answer": null,
+      "suggested_explanation": "Fill in actual explanation based on source text"
+    },
+    {
+      "subject": "English",
+      "chapter": "Rubayiat of Omar Khayyam",
+      "set_id": "chapter-04-rubayiat-of-omar-khayyam-set-2",
+      "question_index": 0,
+      "question": "What does the 'Door to which I found no Key' symbolize?",
+      "marked_correct_index": 1,
+      "marked_correct_answer": "Mystery of life/death",
+      "verdict": "WRONG_EXPLANATION",
+      "issue": "Explanation is placeholder text - actual content missing",
+      "suggested_correct_index": null,
+      "suggested_correct_answer": null,
+      "suggested_explanation": "Fill in actual explanation based on source text"
+    },
+    {
+      "subject": "English",
+      "chapter": "Rubayiat of Omar Khayyam",
+      "set_id": "chapter-04-rubayiat-of-omar-khayyam-set-2",
+      "question_index": 5,
+      "question": "What does the poem suggest about the present moment?",
+      "marked_correct_index": 1,
+      "marked_correct_answer": "Embrace it",
+      "verdict": "WRONG_EXPLANATION",
+      "issue": "Explanation is placeholder text - actual content missing",
+      "suggested_correct_index": null,
+      "suggested_correct_answer": null,
+      "suggested_explanation": "Fill in actual explanation based on source text"
+    }
+  ],
+  "chapter_stats": {
+    "Chapter 01: Lingkuan Gorge": {
+      "total": 36,
+      "flags": 5,
+      "verdicts": {
+        "WRONG_EXPLANATION": 5
+      }
+    },
+    "Population Explosion in Pakistan": {
+      "total": 24,
+      "flags": 2,
+      "verdicts": {
+        "WRONG_EXPLANATION": 2
+      }
+    },
+    "The Income-Tax Man": {
+      "total": 24,
+      "flags": 4,
+      "verdicts": {
+        "WRONG_EXPLANATION": 4
+      }
+    },
+    "Rubayiat of Omar Khayyam": {
+      "total": 24,
+      "flags": 6,
+      "verdicts": {
+        "WRONG_EXPLANATION": 6
+      }
+    },
+    "The Blanket": {
+      "total": 24,
+      "flags": 0,
+      "verdicts": {}
+    },
+    "Stay Hungry Stay Foolish": {
+      "total": 24,
+      "flags": 0,
+      "verdicts": {}
+    },
+    "Tobacco and Your Health": {
+      "total": 24,
+      "flags": 0,
+      "verdicts": {}
+    },
+    "The Sea": {
+      "total": 24,
+      "flags": 0,
+      "verdicts": {}
+    },
+    "Chapter 09: First Year at Harrow": {
+      "total": 24,
+      "flags": 0,
+      "verdicts": {}
+    },
+    "Chapter 10: There's a New Planet in Sight": {
+      "total": 24,
+      "flags": 0,
+      "verdicts": {}
+    },
+    "Chapter 11: Harvest Hymn": {
+      "total": 24,
+      "flags": 0,
+      "verdicts": {}
+    },
+    "Chapter 12: Kaghan Valley": {
+      "total": 24,
+      "flags": 0,
+      "verdicts": {}
+    },
+    "Chapter 13: After Twenty Years": {
+      "total": 24,
+      "flags": 0,
+      "verdicts": {}
+    },
+    "Chapter 14: The Solitary Reaper": {
+      "total": 24,
+      "flags": 0,
+      "verdicts": {}
+    },
+    "Chapter 15: The Pearl": {
+      "total": 24,
+      "flags": 0,
+      "verdicts": {}
+    }
+  },
+  "verdict_breakdown": {
+    "WRONG_EXPLANATION": 17
+  }
+}

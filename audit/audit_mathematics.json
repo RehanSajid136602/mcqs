@@ -1,0 +1,44 @@
+[
+  {
+    "subject": "Mathematics",
+    "chapter": "Chapter 01: Functions and Graphs",
+    "set_id": "chapter-01-functions-and-graphs-set-5",
+    "question_index": 0,
+    "question": "A function $f(x) = mx + c$ represents a straight line when:",
+    "marked_correct_index": 1,
+    "marked_correct_answer": "$m \\neq 0$",
+    "verdict": "NEEDS_REVIEW",
+    "issue": "Mathematically, m = 0 also represents a straight line (a horizontal one). The question/explanation implies 'typical straight line with varying values', which is ambiguous.",
+    "suggested_correct_index": 1,
+    "suggested_correct_answer": "$m \\neq 0$",
+    "suggested_explanation": "A non-horizontal straight line requires m ≠ 0. If m = 0, the line is horizontal."
+  },
+  {
+    "subject": "Mathematics",
+    "chapter": "Chapter 01: Functions and Graphs",
+    "set_id": "chapter-01-functions-and-graphs-set-6",
+    "question_index": 5,
+    "question": "If $f(x) = x^3 - 1$, then $f^{-1}(7) =$",
+    "marked_correct_index": 1,
+    "marked_correct_answer": "2",
+    "verdict": "DUPLICATE",
+    "issue": "Both option 1 ('2') and option 3 ('$\\sqrt[3]{8}$') are mathematically identical and correct.",
+    "suggested_correct_index": 1,
+    "suggested_correct_answer": "2",
+    "suggested_explanation": "To find f⁻¹(7), solve x³ - 1 = 7 => x³ = 8 => x = 2. Option 3 is also 2."
+  },
+  {
+    "subject": "Mathematics",
+    "chapter": "Chapter 03: Integration",
+    "set_id": "chapter-03-integration-set-2",
+    "question_index": 11,
+    "question": "Consumer surplus is calculated as:",
+    "marked_correct_index": 1,
+    "marked_correct_answer": "$\\int_p^b D(x) dx$",
+    "verdict": "NEEDS_REVIEW",
+    "issue": "The standard formula for Consumer Surplus is ∫[0 to q] D(x) dx - p*q. The provided answer ∫[p to b] D(x) dx might be a specific representation where b is the price intercept, but it should be verified against the NBF Class 12 textbook notation.",
+    "suggested_correct_index": 1,
+    "suggested_correct_answer": "$\\int_p^b D(x) dx$",
+    "suggested_explanation": "Consumer surplus is the area under the demand curve and above the price line."
+  }
+]

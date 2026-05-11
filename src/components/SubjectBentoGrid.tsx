@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Atom, Calculator, BookOpen, Cpu, Code2, Terminal } from "lucide-react";
 import { type LucideIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import SubjectCard from "./SubjectCard";
 
 type SubjectColor = "gold" | "blue" | "pink" | "purple" | "teal";
@@ -123,8 +124,12 @@ function CodingLabCard({
   subject: SubjectItem;
   icon: LucideIcon;
 }) {
+  const router = useRouter();
+
   return (
-    <div className="group relative cursor-pointer overflow-hidden rounded-[20px] border border-[rgba(20,184,166,0.2)] bg-gradient-to-br from-[rgba(20,184,166,0.1)] to-[rgba(59,130,246,0.05)] p-6 transition-all duration-300 hover:-translate-y-[3px] hover:border-[rgba(20,184,166,0.4)]">
+    <div
+      onClick={() => router.push("/coding")}
+      className="group relative cursor-pointer overflow-hidden rounded-[20px] border border-[rgba(20,184,166,0.2)] bg-gradient-to-br from-[rgba(20,184,166,0.1)] to-[rgba(59,130,246,0.05)] p-6 transition-all duration-300 hover:-translate-y-[3px] hover:border-[rgba(20,184,166,0.4)]">
       <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-[rgba(20,184,166,0.15)] px-3.5 py-1.5 text-xs font-semibold text-[var(--teal)]">
         <Code2 size={14} strokeWidth={2} />
         Interactive

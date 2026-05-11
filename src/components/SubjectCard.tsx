@@ -2,6 +2,7 @@
 
 import { type LucideIcon } from "lucide-react";
 import { useCallback, useRef } from "react";
+import { useRouter } from "next/navigation";
 import ProgressBar from "./ProgressBar";
 
 type SubjectColor = "gold" | "blue" | "pink" | "purple" | "teal";
@@ -23,6 +24,7 @@ interface SubjectCardProps {
   subject: Subject;
   icon: LucideIcon;
   wide?: boolean;
+  onClick?: () => void;
 }
 
 const iconGradientMap: Record<SubjectColor, { from: string; to: string; text: string }> = {
@@ -41,7 +43,8 @@ const barColorMap: Record<SubjectColor, "gold" | "blue" | "pink" | "purple" | "t
   teal: "teal",
 };
 
-export default function SubjectCard({ subject, icon: Icon, wide }: SubjectCardProps) {
+export default function SubjectCard({ subject, icon: Icon, wide, onClick }: SubjectCardProps) {
+  const router = useRouter();
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -52,12 +55,15 @@ export default function SubjectCard({ subject, icon: Icon, wide }: SubjectCardPr
     card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
   }, []);
 
+  const handleClick = onClick ?? (() => router.push(`/subject/${subject.id}`));
+
   const { from, to, text } = iconGradientMap[subject.color];
 
   return (
     <div
       ref={cardRef}
       onMouseMove={handleMouseMove}
+      onClick={handleClick}
       className={`group relative cursor-pointer overflow-hidden rounded-[20px] border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-all duration-300 hover:-translate-y-[3px] hover:border-[var(--border-hover)] hover:bg-[var(--bg-card-hover)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)] ${
         wide ? "col-span-2" : ""
       }`}

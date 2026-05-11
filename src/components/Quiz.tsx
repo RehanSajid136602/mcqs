@@ -102,14 +102,14 @@ export default function Quiz({ set, subjectId, chapterId, onBack }: QuizProps) {
   }, [selectedIndex, current]);
 
   const handleNext = useCallback(() => {
-    if (current && selectedIndex !== null) {
+    if (current) {
       const origQuestion = set.questions[current.originalIndex];
       questionAttempts.current.push({
         originalIndex: current.originalIndex,
         questionText: current.q,
         options: current.options,
         correctOptionIndex: current.correct,
-        chosenOptionIndex: selectedIndex,
+        chosenOptionIndex: selectedIndex ?? -1,
         wasCorrect: selectedIndex === current.correct,
         explanation: origQuestion.explanation,
       });
@@ -126,6 +126,11 @@ export default function Quiz({ set, subjectId, chapterId, onBack }: QuizProps) {
       setIsComplete(true);
     }
   }, [currentIndex, total, score, set.id, current, selectedIndex, attemptId, finalizeAttempt, subjectId, chapterId, set.questions]);
+
+  const handleSkip = useCallback(() => {
+    if (isAnswered) return;
+    handleNext();
+  }, [isAnswered, handleNext]);
 
   const handleRetake = useCallback(() => {
     questionAttempts.current = [];
@@ -150,6 +155,8 @@ export default function Quiz({ set, subjectId, chapterId, onBack }: QuizProps) {
           }
         } else if (e.key === "Enter" && selectedIndex !== null) {
           handleConfirm();
+        } else if (e.key === "s" || e.key === "S") {
+          handleSkip();
         }
       } else {
         if (e.key === "Enter" || e.key === "ArrowRight") {
@@ -159,7 +166,7 @@ export default function Quiz({ set, subjectId, chapterId, onBack }: QuizProps) {
     }
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isComplete, isAnswered, current, selectedIndex, handleSelect, handleConfirm, handleNext]);
+  }, [isComplete, isAnswered, current, selectedIndex, handleSelect, handleConfirm, handleNext, handleSkip]);
 
   if (!isShuffled || !current) {
     return (
@@ -371,24 +378,38 @@ export default function Quiz({ set, subjectId, chapterId, onBack }: QuizProps) {
 
         {/* Action Buttons */}
         <AnimatePresence>
-          {selectedIndex !== null && !isAnswered && (
+          {!isAnswered && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
-              className="mt-6 flex flex-col items-center gap-2"
+              className="mt-6 flex flex-col items-center gap-3"
             >
+              {selectedIndex !== null && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex flex-col items-center gap-2"
+                >
+                  <button
+                    onClick={handleConfirm}
+                    className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-8 py-4 text-sm font-semibold text-[var(--bg)] transition-opacity hover:opacity-90"
+                  >
+                    <CheckCircle2 size={20} />
+                    Lock In Answer
+                  </button>
+                  <p className="text-xs text-[var(--text-muted)]">
+                    Press Enter to confirm
+                  </p>
+                </motion.div>
+              )}
               <button
-                onClick={handleConfirm}
-                className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-8 py-4 text-sm font-semibold text-[var(--bg)] transition-opacity hover:opacity-90"
+                onClick={handleSkip}
+                className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-6 py-2.5 text-xs font-medium text-[var(--text-muted)] transition-colors hover:border-[var(--border-hover)] hover:text-[var(--text-secondary)]"
               >
-                <CheckCircle2 size={20} />
-                Lock In Answer
+                Skip <span className="ml-1 rounded bg-[var(--bg-surface)] px-1.5 py-0.5 text-[10px] text-[var(--text-muted)]">S</span>
               </button>
-              <p className="text-xs text-[var(--text-muted)]">
-                Press Enter to confirm
-              </p>
             </motion.div>
           )}
           {isAnswered && (

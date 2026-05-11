@@ -40,7 +40,7 @@ export default function KatexRenderer({ text, displayMode = false }: KatexRender
     const parts: Array<{ type: "text" | "math" | "block-math"; value: string }> = [];
     const sanitized = sanitizeText(text);
 
-    const regex = /(\$\$([\s\S]+?)\$\$|\$([^$]+)\$)/g;
+    const regex = /(\$\$([\s\S]+?)\$\$|\$([^$]+)\$|\\\[([\s\S]+?)\\\]|\\\(([^)]+)\\\))/g;
     let lastIndex = 0;
     let match;
 
@@ -56,6 +56,10 @@ export default function KatexRenderer({ text, displayMode = false }: KatexRender
         parts.push({ type: "block-math", value: match[2].trim() });
       } else if (match[3] !== undefined) {
         parts.push({ type: "math", value: match[3].trim() });
+      } else if (match[4] !== undefined) {
+        parts.push({ type: "block-math", value: match[4].trim() });
+      } else if (match[5] !== undefined) {
+        parts.push({ type: "math", value: match[5].trim() });
       }
 
       lastIndex = regex.lastIndex;
@@ -69,7 +73,7 @@ export default function KatexRenderer({ text, displayMode = false }: KatexRender
   }, [text]);
 
   if (!mounted) {
-    return <span>{text.replace(/\$[^$]+\$/g, "").replace(/\$\$[\s\S]*?\$\$/g, "")}</span>;
+    return <span>{text.replace(/\$[^$]+\$/g, "").replace(/\$\$[\s\S]*?\$\$/g, "").replace(/\\\([^)]+\\\)/g, "").replace(/\\\[[\s\S]*?\\\]/g, "")}</span>;
   }
 
   return (
